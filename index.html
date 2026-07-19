@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -266,6 +267,42 @@
     border: 1px solid var(--border);
   }
 
+  .sq-friends-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .sq-friends-me img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--flap);
+  }
+  .sq-friends-me span { flex: 1; font-size: 13px; color: var(--text-primary); }
+  .sq-friends-list { margin-top: 14px; }
+  .sq-friend-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .sq-friend-row:last-child { border-bottom: none; }
+  .sq-friend-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--flap);
+    flex-shrink: 0;
+  }
+  .sq-friend-name { flex: 1; color: var(--text-primary); }
+  .sq-friend-streak { font-family: var(--font-display); font-weight: 700; color: var(--amber); min-width: 20px; text-align: right; }
+  .sq-friend-check { color: var(--teal); font-family: var(--font-mono); font-size: 12px; width: 14px; text-align: center; }
+
   .sq-btn {
     font-family: var(--font-sans);
     font-size: 15px;
@@ -462,6 +499,30 @@
     </div>
   </details>
 
+  <details class="sq-card" id="sq-friends">
+    <summary>Vrienden</summary>
+    <div class="sq-settings-body">
+      <div id="sq-auth-signed-out">
+        <button class="sq-btn" id="sq-google-signin" type="button">Inloggen met Google</button>
+      </div>
+      <div id="sq-auth-signed-in" style="display:none;">
+        <div class="sq-friends-me">
+          <img id="sq-user-photo" alt="">
+          <span id="sq-user-name"></span>
+          <button class="sq-reset" id="sq-signout-btn" type="button">Uitloggen</button>
+        </div>
+        <div class="sq-settings-field">
+          <label for="sq-group-input">Groepscode</label>
+          <input type="text" id="sq-group-input" placeholder="bijv. carnis-crew">
+        </div>
+        <div class="sq-friends-list" id="sq-friends-list"></div>
+      </div>
+      <div class="sq-settings-hint">
+        Iedereen met dezelfde groepscode ziet elkaars streak en of vandaag al voltooid is. Bewijsfoto's en quest-teksten blijven privé op je eigen toestel.
+      </div>
+    </div>
+  </details>
+
   <details class="sq-card">
     <summary>Reislog (<span id="sq-log-count">0</span>)</summary>
     <div class="sq-log-list" id="sq-log-list"></div>
@@ -480,6 +541,9 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 (function () {
   const QUESTS = [
@@ -579,6 +643,21 @@
     { id: "s14", category: "sociaal", text: "Organiseer een korte hangout met mensen uit je omgeving." }
   ];
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyAA0y3SKL7nyDGKG19mNh4g3zszef2EeVo",
+    authDomain: "sidequest-a-day.firebaseapp.com",
+    projectId: "sidequest-a-day",
+    storageBucket: "sidequest-a-day.firebasestorage.app",
+    messagingSenderId: "385778890911",
+    appId: "1:385778890911:web:4e9ea9a0018a6a33fc8aaa"
+  };
+  let fbAuth = null, fbDb = null, fbUser = null, friendsUnsub = null;
+  try {
+    firebase.initializeApp(firebaseConfig);
+    fbAuth = firebase.auth();
+    fbDb = firebase.firestore();
+  } catch (e) { console.error("Firebase init mislukt", e); }
+
   const CATEGORY_META = {
     verken: { label: "Verken", varName: "--teal" },
     fitness: { label: "Fitness", varName: "--coral" },
@@ -641,6 +720,7 @@
       lastDate: today,
       dayNumber: 1,
       location: "",
+      groupCode: "",
       activeCategories: DEFAULT_ACTIVE.slice(),
       currentQuest: { id: first.id, category: first.category, text: renderQuestText(first.text, seedState) },
       completedToday: false,
@@ -655,6 +735,7 @@
   }
   function migrateState(state) {
     if (typeof state.location !== "string") state.location = "";
+    if (typeof state.groupCode !== "string") state.groupCode = "";
     if (typeof state.proofPhoto === "undefined") state.proofPhoto = null;
     if (!Array.isArray(state.activeCategories)) state.activeCategories = DEFAULT_ACTIVE.slice();
     const catMap = { melbourne: "verken", wildcard: "algemeen" };
@@ -772,6 +853,81 @@
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+  }
+
+  function signInWithGoogle() {
+    if (!fbAuth) return;
+    const provider = new firebase.auth.GoogleAuthProvider();
+    fbAuth.signInWithRedirect(provider).catch(e => console.error("Inloggen mislukt", e));
+  }
+  function signOutUser() {
+    if (fbAuth) fbAuth.signOut();
+  }
+  function unsubscribeGroup() {
+    if (friendsUnsub) { friendsUnsub(); friendsUnsub = null; }
+  }
+  function subscribeToGroup(code) {
+    unsubscribeGroup();
+    if (!fbDb || !code) return;
+    friendsUnsub = fbDb.collection("groups").doc(code).collection("members")
+      .onSnapshot((snap) => {
+        const friends = [];
+        snap.forEach(doc => friends.push(Object.assign({ uid: doc.id }, doc.data())));
+        friends.sort((a, b) => (b.streak || 0) - (a.streak || 0));
+        renderFriendsList(friends);
+      }, (err) => console.error("Vrienden ophalen mislukt", err));
+  }
+  function pushMyStats() {
+    if (!fbDb || !fbUser || !state.groupCode) return;
+    fbDb.collection("groups").doc(state.groupCode).collection("members").doc(fbUser.uid).set({
+      name: fbUser.displayName || "Anoniem",
+      photoURL: fbUser.photoURL || "",
+      streak: state.streak,
+      longestStreak: state.longestStreak,
+      totalCompleted: state.totalCompleted,
+      completedToday: state.completedToday,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(e => console.error("Delen mislukt", e));
+  }
+  function renderAuthUI() {
+    const signedOut = document.getElementById("sq-auth-signed-out");
+    const signedIn = document.getElementById("sq-auth-signed-in");
+    if (fbUser) {
+      signedOut.style.display = "none";
+      signedIn.style.display = "block";
+      document.getElementById("sq-user-name").textContent = fbUser.displayName || "Anoniem";
+      const photoEl = document.getElementById("sq-user-photo");
+      if (fbUser.photoURL) { photoEl.src = fbUser.photoURL; photoEl.style.display = "block"; }
+      else { photoEl.style.display = "none"; }
+      const groupInput = document.getElementById("sq-group-input");
+      if (document.activeElement !== groupInput) groupInput.value = state.groupCode || "";
+    } else {
+      signedOut.style.display = "block";
+      signedIn.style.display = "none";
+    }
+  }
+  function renderFriendsList(friends) {
+    const listEl = document.getElementById("sq-friends-list");
+    if (!listEl) return;
+    listEl.innerHTML = "";
+    if (!friends.length) {
+      const empty = document.createElement("div");
+      empty.className = "sq-log-empty";
+      empty.textContent = state.groupCode ? "Nog niemand in deze groep." : "Vul een groepscode in om vrienden te zien.";
+      listEl.appendChild(empty);
+      return;
+    }
+    friends.forEach(f => {
+      const row = document.createElement("div");
+      row.className = "sq-friend-row";
+      const isMe = fbUser && f.uid === fbUser.uid;
+      row.innerHTML =
+        (f.photoURL ? '<img class="sq-friend-avatar" src="' + f.photoURL + '" alt="">' : '<div class="sq-friend-avatar"></div>') +
+        '<span class="sq-friend-name">' + (f.name || "Anoniem") + (isMe ? ' <span style="color:var(--text-dim);font-size:11px;">(jij)</span>' : '') + '</span>' +
+        '<span class="sq-friend-streak">' + (f.streak || 0) + '</span>' +
+        '<span class="sq-friend-check">' + (f.completedToday ? "✓" : "") + '</span>';
+      listEl.appendChild(row);
+    });
   }
 
   let state = loadState();
@@ -913,6 +1069,7 @@
     const cat = state.currentQuest.category;
     state.categoryCounts[cat] = (state.categoryCounts[cat] || 0) + 1;
     saveState(state);
+    pushMyStats();
     render(false);
   }
 
@@ -957,6 +1114,29 @@
     e.target.value = "";
   });
 
+  document.getElementById("sq-google-signin").addEventListener("click", signInWithGoogle);
+  document.getElementById("sq-signout-btn").addEventListener("click", signOutUser);
+  document.getElementById("sq-group-input").addEventListener("change", (e) => {
+    state.groupCode = e.target.value.trim().toLowerCase().replace(/\s+/g, "-");
+    saveState(state);
+    if (fbUser && state.groupCode) { subscribeToGroup(state.groupCode); pushMyStats(); }
+    else { unsubscribeGroup(); renderFriendsList([]); }
+  });
+
+  if (fbAuth) {
+    fbAuth.onAuthStateChanged((user) => {
+      fbUser = user;
+      renderAuthUI();
+      if (user && state.groupCode) {
+        subscribeToGroup(state.groupCode);
+        pushMyStats();
+      } else {
+        unsubscribeGroup();
+        renderFriendsList([]);
+      }
+    });
+  }
+
   render(true);
 })();
 
@@ -968,3 +1148,6 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
+```
+
+Zet deze in `index.html` in je repo, dezelfde stap als altijd: potlood-icoon, alles selecteren, plakken, committen.
