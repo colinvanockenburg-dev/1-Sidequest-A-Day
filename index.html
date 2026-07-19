@@ -6,36 +6,39 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Sidequest">
-<meta name="theme-color" content="#14171a">
+<meta name="theme-color" content="#15141b">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>Melbourne Sidequest</title>
 <style>
   html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: #14171a;
+    background: #15141b;
   }
   #sq-root {
-    --bg: #14171a;
-    --panel: #1d2126;
-    --flap: #23282e;
-    --flap-seam: #14171a;
-    --text-primary: #f2ede2;
-    --text-muted: #8b939b;
-    --text-dim: #5b6169;
-    --amber: #e8a33d;
-    --teal: #4f9d94;
-    --coral: #c05a3e;
-    --violet: #8d7bb5;
-    --crazy: #d1495b;
-    --sociaal: #5b8dc2;
-    --hospitality: #a68a4a;
-    --border: #2e343b;
+    --bg: #15141b;
+    --panel: #201f29;
+    --flap: #262533;
+    --flap-seam: #15141b;
+    --text-primary: #f5f1ea;
+    --text-muted: #9691a3;
+    --text-dim: #625d70;
+    --amber: #eab655;
+    --teal: #5fb3a3;
+    --coral: #e0785a;
+    --violet: #a68bd1;
+    --crazy: #e0587a;
+    --sociaal: #6a9bd8;
+    --border: #34313f;
     --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
     background: var(--bg);
     color: var(--text-primary);
@@ -65,9 +68,10 @@
   .sq-eyebrow .sq-station { color: var(--amber); }
 
   .sq-title {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    letter-spacing: 0.1em;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--text-muted);
     margin: 0 0 4px;
@@ -95,9 +99,10 @@
     align-items: center;
     gap: 6px;
     justify-content: center;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.05em;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
     padding: 9px 14px;
     border-radius: 999px;
@@ -157,12 +162,12 @@
     pointer-events: none;
   }
   #sq-quest-text {
-    font-family: var(--font-mono);
-    font-size: clamp(14px, 3.6vw, 17px);
-    line-height: 1.6;
-    letter-spacing: 0.02em;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(16px, 4vw, 19px);
+    line-height: 1.5;
+    letter-spacing: 0.005em;
     color: var(--text-primary);
-    text-transform: uppercase;
     z-index: 1;
   }
   @keyframes sq-pop {
@@ -189,8 +194,9 @@
   }
   .sq-stub svg { flex-shrink: 0; }
   .sq-stub-value {
-    font-family: var(--font-mono);
-    font-size: 19px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 20px;
     color: var(--amber);
     line-height: 1;
   }
@@ -470,20 +476,22 @@
     { id: "a15", category: "algemeen", text: "Zoek een lokale markt of buurt op waar je nog nooit bent geweest." },
     { id: "a16", category: "algemeen", text: "Schrijf in 3 zinnen op wat je deze week hebt geleerd." },
 
-    { id: "c1", category: "crazy", text: "Neem een koude douche van minimaal 2 minuten, zonder opwarmen vooraf." },
-    { id: "c2", category: "crazy", text: "Zing hardop een liedje op een openbare plek." },
-    { id: "c3", category: "crazy", text: "Praat vandaag met 5 vreemden, ieder minstens 2 minuten." },
-    { id: "c4", category: "crazy", text: "Eet iets extreem pittigs en beschrijf achteraf je eigen reactie." },
-    { id: "c5", category: "crazy", text: "Vraag een vreemde om een foto van je te maken op de gekste pose die je kunt bedenken." },
-    { id: "c6", category: "crazy", text: "Doe een volledige dag zonder sociale media." },
-    { id: "c7", category: "crazy", text: "Vraag 3 mensen vandaag naar het beste advies dat ze ooit kregen." },
-    { id: "c8", category: "crazy", text: "Improviseer 30 seconden dans, ergens waar mensen bij zijn." },
-    { id: "c9", category: "crazy", text: "Bestel iets willekeurigs van een menu zonder de naam op te zoeken." },
-    { id: "c10", category: "crazy", text: "Doe vandaag het tegenovergestelde van je normale ochtendroutine." },
-    { id: "c11", category: "crazy", text: "Geef een onbekende in persoon een oprecht compliment." },
-    { id: "c12", category: "crazy", text: "Slaap een nacht met je telefoon buiten de slaapkamer." },
-    { id: "c13", category: "crazy", text: "Schrijf een briefje met iets aardigs en laat het ergens achter voor een vreemde." },
-    { id: "c14", category: "crazy", text: "Doe een activiteit die je normaal te kinderachtig zou vinden, zoals een schommel of speeltuin." },
+    { id: "c1", category: "crazy", text: "Boek een adrenaline-activiteit die je nog nooit hebt gedaan, zoals skydiven, bungeejumpen of parasailen, bij een erkende aanbieder." },
+    { id: "c2", category: "crazy", text: "Ga bij zonsopkomst een ijskoude duik doen in open water, zee, baai of meer." },
+    { id: "c3", category: "crazy", text: "Meld je aan voor een open mic en treed spontaan op, zingen, comedy, spoken word, wat dan ook." },
+    { id: "c4", category: "crazy", text: "Ga een volledige dag door zonder een woord te zeggen, communiceer alleen met briefjes of gebaren." },
+    { id: "c5", category: "crazy", text: "Doe een extreme eetuitdaging bij een restaurant, zoals de heetste wing of chili challenge die ze hebben." },
+    { id: "c6", category: "crazy", text: "Vraag een complete vreemde om het meest bizarre verhaal uit zijn leven, en onthoud het." },
+    { id: "c7", category: "crazy", text: "Ga 24 uur volledig zonder scherm, geen telefoon, laptop of tv." },
+    { id: "c8", category: "crazy", text: "Rij de heftigste attractie van een pretpark of kermis die je kunt vinden, zonder aarzelen." },
+    { id: "c9", category: "crazy", text: "Vertel 3 complete vreemden achter elkaar een gênant verhaal over jezelf." },
+    { id: "c10", category: "crazy", text: "Improviseer een speech van 2 minuten voor een groep onbekenden, over een onderwerp dat zij kiezen." },
+    { id: "c11", category: "crazy", text: "Doe vandaag alles in het openbaar met je niet-dominante hand, eten, schrijven, alles." },
+    { id: "c12", category: "crazy", text: "Sta voor zonsopkomst op, reis naar de mooiste plek die je kent en zie hem alleen opkomen." },
+    { id: "c13", category: "crazy", text: "Vraag iemand die je bewondert om een half uur van zijn tijd, puur uit nieuwsgierigheid, zonder duidelijke reden." },
+    { id: "c14", category: "crazy", text: "Doe vandaag iets waar je al maanden over twijfelt uit pure angst, zonder verder uitstel." },
+    { id: "c15", category: "crazy", text: "Loop een compleet onbekende buurt in zonder navigatie, en vind zelf de weg terug." },
+    { id: "c16", category: "crazy", text: "Ga een hele dag zonder te klagen, elke klacht die opkomt zet je om in een compliment voor iemand anders." },
 
     { id: "s1", category: "sociaal", text: "Nodig iemand uit voor koffie of een maaltijd die je nog niet goed kent." },
     { id: "s2", category: "sociaal", text: "Ga naar een buurtevenement of meetup die je nog nooit hebt bezocht." },
@@ -498,22 +506,7 @@
     { id: "s11", category: "sociaal", text: "Vraag 3 mensen hoe hun week is gegaan, en luister echt." },
     { id: "s12", category: "sociaal", text: "Zoek een taal- of gespreksgroep op in je omgeving." },
     { id: "s13", category: "sociaal", text: "Deel iets persoonlijks met iemand die je pas kort kent." },
-    { id: "s14", category: "sociaal", text: "Organiseer een korte hangout met mensen uit je omgeving." },
-
-    { id: "h1", category: "hospitality", text: "Observeer 15 minuten hoe een concierge of receptie te werk gaat." },
-    { id: "h2", category: "hospitality", text: "Lees een artikel over een hoteltrend en vat het in 3 zinnen samen." },
-    { id: "h3", category: "hospitality", text: "Oefen een korte pitch waarin je jezelf voorstelt als toekomstig concierge." },
-    { id: "h4", category: "hospitality", text: "Zoek uit wat de sterkste marktpositie is van een hotelketen in jouw omgeving." },
-    { id: "h5", category: "hospitality", text: "Schrijf 3 vragen op die je een general manager zou stellen als je de kans kreeg." },
-    { id: "h6", category: "hospitality", text: "Bekijk hoe een restaurant of hotel gasten begroet, en noteer wat opvalt." },
-    { id: "h7", category: "hospitality", text: "Zoek een voorbeeld van uitstekende klantenservice op en beschrijf waarom het werkte." },
-    { id: "h8", category: "hospitality", text: "Oefen een lastig gastgesprek na, bijvoorbeeld een klacht afhandelen." },
-    { id: "h9", category: "hospitality", text: "Leer 5 nieuwe vaktermen uit de hospitality in het Engels." },
-    { id: "h10", category: "hospitality", text: "Bekijk een hotellobby of receptie kritisch als geheime gast, en noteer 3 verbeterpunten." },
-    { id: "h11", category: "hospitality", text: "Schrijf een korte reflectie over wat je deze week hebt geleerd over gastvrijheid." },
-    { id: "h12", category: "hospitality", text: "Zoek uit hoe een hotel in jouw omgeving zich onderscheidt van de concurrentie." },
-    { id: "h13", category: "hospitality", text: "Vraag een medewerker in de horeca naar zijn grootste uitdaging in het werk." },
-    { id: "h14", category: "hospitality", text: "Bekijk een review van een hotel en analyseer waarin de gastervaring tekortschoot." }
+    { id: "s14", category: "sociaal", text: "Organiseer een korte hangout met mensen uit je omgeving." }
   ];
 
   const CATEGORY_META = {
@@ -521,8 +514,7 @@
     fitness: { label: "Fitness", varName: "--coral" },
     algemeen: { label: "Algemeen", varName: "--violet" },
     crazy: { label: "Crazy", varName: "--crazy" },
-    sociaal: { label: "Sociaal", varName: "--sociaal" },
-    hospitality: { label: "Hospitality", varName: "--hospitality" }
+    sociaal: { label: "Sociaal", varName: "--sociaal" }
   };
   const DEFAULT_ACTIVE = ["verken", "fitness", "algemeen"];
   const MONTHS = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
@@ -585,7 +577,7 @@
       streak: 0,
       longestStreak: 0,
       totalCompleted: 0,
-      categoryCounts: { verken: 0, fitness: 0, algemeen: 0, crazy: 0, sociaal: 0, hospitality: 0 },
+      categoryCounts: { verken: 0, fitness: 0, algemeen: 0, crazy: 0, sociaal: 0 },
       recentIds: [first.id],
       log: []
     };
@@ -595,20 +587,26 @@
     if (!Array.isArray(state.activeCategories)) state.activeCategories = DEFAULT_ACTIVE.slice();
     const catMap = { melbourne: "verken", wildcard: "algemeen" };
     state.activeCategories = state.activeCategories.map(c => catMap[c] || c);
+    const validCats = Object.keys(CATEGORY_META);
+    state.activeCategories = state.activeCategories.filter(c => validCats.includes(c));
+    if (!state.activeCategories.length) state.activeCategories = DEFAULT_ACTIVE.slice();
     if (state.currentQuest && catMap[state.currentQuest.category]) {
       state.currentQuest.category = catMap[state.currentQuest.category];
     }
+    if (state.currentQuest && !validCats.includes(state.currentQuest.category)) {
+      state.currentQuest.category = "algemeen";
+    }
     const cc = state.categoryCounts || {};
-    state.categoryCounts = {
-      verken: cc.verken || cc.melbourne || 0,
-      fitness: cc.fitness || 0,
-      algemeen: cc.algemeen || cc.wildcard || 0,
-      crazy: cc.crazy || 0,
-      sociaal: cc.sociaal || 0,
-      hospitality: cc.hospitality || 0
-    };
+    const newCc = {};
+    validCats.forEach(c => { newCc[c] = cc[c] || 0; });
+    newCc.verken = newCc.verken || cc.melbourne || 0;
+    newCc.algemeen = newCc.algemeen || cc.wildcard || 0;
+    state.categoryCounts = newCc;
     if (Array.isArray(state.log)) {
-      state.log.forEach(e => { if (catMap[e.category]) e.category = catMap[e.category]; });
+      state.log.forEach(e => {
+        if (catMap[e.category]) e.category = catMap[e.category];
+        if (!validCats.includes(e.category)) e.category = "algemeen";
+      });
     } else {
       state.log = [];
     }
@@ -728,7 +726,7 @@
     document.getElementById("sq-total-label").textContent = state.totalCompleted + " quests voltooid";
     const cc = state.categoryCounts;
     document.getElementById("sq-breakdown-label").textContent =
-      "V " + (cc.verken||0) + " · F " + (cc.fitness||0) + " · A " + (cc.algemeen||0) + " · C " + (cc.crazy||0) + " · S " + (cc.sociaal||0) + " · H " + (cc.hospitality||0);
+      "V " + (cc.verken||0) + " · F " + (cc.fitness||0) + " · A " + (cc.algemeen||0) + " · C " + (cc.crazy||0) + " · S " + (cc.sociaal||0);
 
     const locInput = document.getElementById("sq-location-input");
     if (document.activeElement !== locInput) locInput.value = state.location || "";
