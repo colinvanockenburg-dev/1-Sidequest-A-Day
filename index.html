@@ -1,13 +1,12 @@
-```html
 <!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sidequest">
-<meta name="theme-color" content="#15141b">
+<meta name="theme-color" content="#F6EEDC">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="icon" href="./icon-192.png">
@@ -20,23 +19,24 @@
     margin: 0;
     padding: 0;
     height: 100%;
-    background: #15141b;
+    background: #F6EEDC;
   }
   #sq-root {
-    --bg: #15141b;
-    --panel: #201f29;
-    --flap: #262533;
-    --flap-seam: #15141b;
-    --text-primary: #f5f1ea;
-    --text-muted: #9691a3;
-    --text-dim: #625d70;
-    --amber: #eab655;
-    --teal: #5fb3a3;
-    --coral: #e0785a;
-    --violet: #a68bd1;
-    --crazy: #e0587a;
-    --sociaal: #6a9bd8;
-    --border: #34313f;
+    --bg: #F6EEDC;
+    --panel: #FFFFFF;
+    --flap: #1E3A4C;
+    --flap-seam: #1E3A4C;
+    --board-text: #F6EEDC;
+    --text-primary: #2E2419;
+    --text-muted: #8B7A63;
+    --text-dim: #B7A78C;
+    --amber: #E2A63F;
+    --teal: #2F8F86;
+    --coral: #C9603C;
+    --violet: #A97CA5;
+    --crazy: #D9527A;
+    --sociaal: #4F8FA6;
+    --border: #E3D2B0;
     --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
     --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -145,7 +145,7 @@
     display: flex;
     align-items: center;
     overflow: hidden;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
+    box-shadow: 0 12px 30px rgba(46,36,25,0.22), inset 0 1px 0 rgba(255,255,255,0.04);
   }
   .sq-board::after {
     content: "";
@@ -168,7 +168,7 @@
     font-size: clamp(16px, 4vw, 19px);
     line-height: 1.5;
     letter-spacing: 0.005em;
-    color: var(--text-primary);
+    color: var(--board-text);
     z-index: 1;
   }
   @keyframes sq-pop {
@@ -191,7 +191,7 @@
     display: flex;
     align-items: center;
     gap: 9px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 14px rgba(46,36,25,0.08);
   }
   .sq-stub svg { flex-shrink: 0; }
   .sq-stub-value {
@@ -281,6 +281,31 @@
     background: var(--flap);
   }
   .sq-friends-me span { flex: 1; font-size: 13px; color: var(--text-primary); }
+  .sq-auth-actions { display: flex; gap: 8px; margin-top: 4px; }
+  .sq-auth-actions .sq-btn { width: auto; flex: 1; padding: 12px 14px; font-size: 14px; }
+  .sq-auth-error { font-size: 11.5px; color: var(--crazy); min-height: 14px; margin-top: 8px; }
+  .sq-add-friend-row { display: flex; gap: 8px; }
+  .sq-add-friend-row input { flex: 1; }
+  .sq-add-friend-row button {
+    background: var(--flap);
+    color: var(--board-text);
+    border: 1px solid var(--flap);
+    border-radius: 10px;
+    padding: 0 16px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .sq-friend-remove {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 17px;
+    line-height: 1;
+    padding: 0 2px;
+  }
   .sq-friends-list { margin-top: 14px; }
   .sq-friend-row {
     display: flex;
@@ -321,8 +346,8 @@
   .sq-btn-primary {
     background: var(--amber);
     border-color: var(--amber);
-    color: #1a1508;
-    box-shadow: 0 8px 20px rgba(232,163,61,0.28);
+    color: #2E2419;
+    box-shadow: 0 8px 20px rgba(226,166,63,0.32);
   }
   .sq-btn-primary.sq-done {
     background: transparent;
@@ -450,7 +475,7 @@
   <div class="sq-meta-row">
     <div class="sq-stub">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C12 2 6 9 6 14C6 17.3137 8.68629 20 12 20C15.3137 20 18 17.3137 18 14C18 9 12 2 12 2Z" fill="#e8a33d" opacity="0.85"/>
+        <path d="M12 2C12 2 6 9 6 14C6 17.3137 8.68629 20 12 20C15.3137 20 18 17.3137 18 14C18 9 12 2 12 2Z" fill="#E2A63F" opacity="0.9"/>
       </svg>
       <div>
         <div class="sq-stub-value" id="sq-streak-value">0</div>
@@ -503,22 +528,37 @@
     <summary>Vrienden</summary>
     <div class="sq-settings-body">
       <div id="sq-auth-signed-out">
-        <button class="sq-btn" id="sq-google-signin" type="button">Inloggen met Google</button>
+        <div class="sq-settings-field">
+          <label for="sq-username-input">Gebruikersnaam</label>
+          <input type="text" id="sq-username-input" placeholder="bijv. colin92" autocomplete="username">
+        </div>
+        <div class="sq-settings-field">
+          <label for="sq-password-input">Wachtwoord</label>
+          <input type="password" id="sq-password-input" placeholder="minstens 6 tekens" autocomplete="current-password">
+        </div>
+        <div class="sq-auth-actions">
+          <button class="sq-btn sq-btn-primary" id="sq-signup-btn" type="button">Account aanmaken</button>
+          <button class="sq-btn" id="sq-login-btn" type="button">Inloggen</button>
+        </div>
+        <div class="sq-auth-error" id="sq-auth-error"></div>
       </div>
       <div id="sq-auth-signed-in" style="display:none;">
         <div class="sq-friends-me">
-          <img id="sq-user-photo" alt="">
           <span id="sq-user-name"></span>
           <button class="sq-reset" id="sq-signout-btn" type="button">Uitloggen</button>
         </div>
         <div class="sq-settings-field">
-          <label for="sq-group-input">Groepscode</label>
-          <input type="text" id="sq-group-input" placeholder="bijv. carnis-crew">
+          <label for="sq-add-friend-input">Vriend toevoegen (gebruikersnaam)</label>
+          <div class="sq-add-friend-row">
+            <input type="text" id="sq-add-friend-input" placeholder="gebruikersnaam">
+            <button type="button" id="sq-add-friend-btn">Toevoegen</button>
+          </div>
+          <div class="sq-auth-error" id="sq-friend-error"></div>
         </div>
         <div class="sq-friends-list" id="sq-friends-list"></div>
       </div>
       <div class="sq-settings-hint">
-        Iedereen met dezelfde groepscode ziet elkaars streak en of vandaag al voltooid is. Bewijsfoto's en quest-teksten blijven privé op je eigen toestel.
+        Je gebruikersnaam, streak en of je vandaag al voltooid hebt zijn zichtbaar voor wie je toevoegt. Bewijsfoto's en quest-teksten blijven privé op je eigen toestel.
       </div>
     </div>
   </details>
@@ -651,7 +691,8 @@
     messagingSenderId: "385778890911",
     appId: "1:385778890911:web:4e9ea9a0018a6a33fc8aaa"
   };
-  let fbAuth = null, fbDb = null, fbUser = null, friendsUnsub = null;
+  let fbAuth = null, fbDb = null, fbUser = null, myUsername = "";
+  let friendsListUnsub = null, friendDocUnsubs = {}, friendData = {};
   try {
     firebase.initializeApp(firebaseConfig);
     fbAuth = firebase.auth();
@@ -855,33 +896,68 @@
     reader.readAsDataURL(file);
   }
 
-  function signInWithGoogle() {
+  function usernameToEmail(username) {
+    return username.trim().toLowerCase().replace(/[^a-z0-9_.-]/g, "") + "@sidequest.local";
+  }
+  function friendlyAuthError(e) {
+    const code = e && e.code;
+    if (code === "auth/email-already-in-use") return "Die gebruikersnaam is al bezet.";
+    if (code === "auth/wrong-password" || code === "auth/user-not-found" || code === "auth/invalid-credential" || code === "auth/invalid-login-credentials") return "Gebruikersnaam of wachtwoord klopt niet.";
+    if (code === "auth/weak-password") return "Wachtwoord moet minstens 6 tekens zijn.";
+    if (code === "auth/invalid-email") return "Gebruik alleen letters en cijfers in je gebruikersnaam.";
+    return "Er ging iets mis, probeer het opnieuw.";
+  }
+  function showAuthError(msg) {
+    const el = document.getElementById("sq-auth-error");
+    if (el) el.textContent = msg || "";
+  }
+  function showFriendError(msg) {
+    const el = document.getElementById("sq-friend-error");
+    if (el) el.textContent = msg || "";
+  }
+  function signUp() {
+    showAuthError("");
+    if (!fbAuth || !fbDb) return;
+    const username = document.getElementById("sq-username-input").value.trim().toLowerCase();
+    const password = document.getElementById("sq-password-input").value;
+    if (!username || username.length < 3) { showAuthError("Gebruikersnaam moet minstens 3 tekens zijn."); return; }
+    if (!password || password.length < 6) { showAuthError("Wachtwoord moet minstens 6 tekens zijn."); return; }
+    const usernameRef = fbDb.collection("usernames").doc(username);
+    usernameRef.get().then((doc) => {
+      if (doc.exists) { showAuthError("Die gebruikersnaam is al bezet."); return; }
+      return fbAuth.createUserWithEmailAndPassword(usernameToEmail(username), password).then((cred) => {
+        const uid = cred.user.uid;
+        myUsername = username;
+        return Promise.all([
+          usernameRef.set({ uid: uid }),
+          fbDb.collection("users").doc(uid).set({
+            username: username,
+            streak: state.streak,
+            longestStreak: state.longestStreak,
+            totalCompleted: state.totalCompleted,
+            completedToday: state.completedToday,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          })
+        ]);
+      });
+    }).catch((e) => showAuthError(friendlyAuthError(e)));
+  }
+  function logIn() {
+    showAuthError("");
     if (!fbAuth) return;
-    const provider = new firebase.auth.GoogleAuthProvider();
-    fbAuth.signInWithRedirect(provider).catch(e => console.error("Inloggen mislukt", e));
+    const username = document.getElementById("sq-username-input").value.trim().toLowerCase();
+    const password = document.getElementById("sq-password-input").value;
+    if (!username || !password) { showAuthError("Vul gebruikersnaam en wachtwoord in."); return; }
+    fbAuth.signInWithEmailAndPassword(usernameToEmail(username), password)
+      .catch((e) => showAuthError(friendlyAuthError(e)));
   }
   function signOutUser() {
     if (fbAuth) fbAuth.signOut();
   }
-  function unsubscribeGroup() {
-    if (friendsUnsub) { friendsUnsub(); friendsUnsub = null; }
-  }
-  function subscribeToGroup(code) {
-    unsubscribeGroup();
-    if (!fbDb || !code) return;
-    friendsUnsub = fbDb.collection("groups").doc(code).collection("members")
-      .onSnapshot((snap) => {
-        const friends = [];
-        snap.forEach(doc => friends.push(Object.assign({ uid: doc.id }, doc.data())));
-        friends.sort((a, b) => (b.streak || 0) - (a.streak || 0));
-        renderFriendsList(friends);
-      }, (err) => console.error("Vrienden ophalen mislukt", err));
-  }
   function pushMyStats() {
-    if (!fbDb || !fbUser || !state.groupCode) return;
-    fbDb.collection("groups").doc(state.groupCode).collection("members").doc(fbUser.uid).set({
-      name: fbUser.displayName || "Anoniem",
-      photoURL: fbUser.photoURL || "",
+    if (!fbDb || !fbUser) return;
+    fbDb.collection("users").doc(fbUser.uid).set({
+      username: myUsername,
       streak: state.streak,
       longestStreak: state.longestStreak,
       totalCompleted: state.totalCompleted,
@@ -889,18 +965,67 @@
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true }).catch(e => console.error("Delen mislukt", e));
   }
+  function addFriend() {
+    showFriendError("");
+    if (!fbDb || !fbUser) return;
+    const input = document.getElementById("sq-add-friend-input");
+    const uname = input.value.trim().toLowerCase();
+    if (!uname) return;
+    if (uname === myUsername) { showFriendError("Dat ben je zelf."); return; }
+    fbDb.collection("usernames").doc(uname).get().then((doc) => {
+      if (!doc.exists) { showFriendError("Geen gebruiker met die naam gevonden."); return; }
+      const theirUid = doc.data().uid;
+      return fbDb.collection("users").doc(fbUser.uid).collection("friends").doc(theirUid)
+        .set({ addedAt: firebase.firestore.FieldValue.serverTimestamp() })
+        .then(() => { input.value = ""; });
+    }).catch((e) => { console.error(e); showFriendError("Toevoegen mislukt, probeer opnieuw."); });
+  }
+  function removeFriend(uid) {
+    if (!fbDb || !fbUser) return;
+    fbDb.collection("users").doc(fbUser.uid).collection("friends").doc(uid).delete().catch(e => console.error(e));
+  }
+  function unsubscribeAllFriends() {
+    if (friendsListUnsub) { friendsListUnsub(); friendsListUnsub = null; }
+    Object.keys(friendDocUnsubs).forEach(uid => friendDocUnsubs[uid]());
+    friendDocUnsubs = {};
+    friendData = {};
+  }
+  function subscribeFriendsList() {
+    if (!fbDb || !fbUser) return;
+    friendsListUnsub = fbDb.collection("users").doc(fbUser.uid).collection("friends")
+      .onSnapshot((snap) => {
+        const currentUids = new Set();
+        snap.forEach(doc => currentUids.add(doc.id));
+        Object.keys(friendDocUnsubs).forEach(uid => {
+          if (!currentUids.has(uid)) {
+            friendDocUnsubs[uid]();
+            delete friendDocUnsubs[uid];
+            delete friendData[uid];
+          }
+        });
+        currentUids.forEach(uid => {
+          if (!friendDocUnsubs[uid]) {
+            friendDocUnsubs[uid] = fbDb.collection("users").doc(uid).onSnapshot((udoc) => {
+              friendData[uid] = udoc.exists ? Object.assign({ uid: uid }, udoc.data()) : { uid: uid, username: "onbekend" };
+              renderFriendsFromData();
+            });
+          }
+        });
+        renderFriendsFromData();
+      }, (err) => console.error("Vrienden ophalen mislukt", err));
+  }
+  function renderFriendsFromData() {
+    const list = Object.values(friendData);
+    list.sort((a, b) => (b.streak || 0) - (a.streak || 0));
+    renderFriendsList(list);
+  }
   function renderAuthUI() {
     const signedOut = document.getElementById("sq-auth-signed-out");
     const signedIn = document.getElementById("sq-auth-signed-in");
     if (fbUser) {
       signedOut.style.display = "none";
       signedIn.style.display = "block";
-      document.getElementById("sq-user-name").textContent = fbUser.displayName || "Anoniem";
-      const photoEl = document.getElementById("sq-user-photo");
-      if (fbUser.photoURL) { photoEl.src = fbUser.photoURL; photoEl.style.display = "block"; }
-      else { photoEl.style.display = "none"; }
-      const groupInput = document.getElementById("sq-group-input");
-      if (document.activeElement !== groupInput) groupInput.value = state.groupCode || "";
+      document.getElementById("sq-user-name").textContent = myUsername ? ("Ingelogd als " + myUsername) : "Ingelogd";
     } else {
       signedOut.style.display = "block";
       signedIn.style.display = "none";
@@ -913,20 +1038,22 @@
     if (!friends.length) {
       const empty = document.createElement("div");
       empty.className = "sq-log-empty";
-      empty.textContent = state.groupCode ? "Nog niemand in deze groep." : "Vul een groepscode in om vrienden te zien.";
+      empty.textContent = "Nog geen vrienden toegevoegd.";
       listEl.appendChild(empty);
       return;
     }
     friends.forEach(f => {
       const row = document.createElement("div");
       row.className = "sq-friend-row";
-      const isMe = fbUser && f.uid === fbUser.uid;
       row.innerHTML =
-        (f.photoURL ? '<img class="sq-friend-avatar" src="' + f.photoURL + '" alt="">' : '<div class="sq-friend-avatar"></div>') +
-        '<span class="sq-friend-name">' + (f.name || "Anoniem") + (isMe ? ' <span style="color:var(--text-dim);font-size:11px;">(jij)</span>' : '') + '</span>' +
+        '<span class="sq-friend-name">' + (f.username || "onbekend") + '</span>' +
         '<span class="sq-friend-streak">' + (f.streak || 0) + '</span>' +
-        '<span class="sq-friend-check">' + (f.completedToday ? "✓" : "") + '</span>';
+        '<span class="sq-friend-check">' + (f.completedToday ? "✓" : "") + '</span>' +
+        '<button type="button" class="sq-friend-remove" data-uid="' + f.uid + '">×</button>';
       listEl.appendChild(row);
+    });
+    listEl.querySelectorAll(".sq-friend-remove").forEach(btn => {
+      btn.addEventListener("click", () => removeFriend(btn.getAttribute("data-uid")));
     });
   }
 
@@ -1114,24 +1241,25 @@
     e.target.value = "";
   });
 
-  document.getElementById("sq-google-signin").addEventListener("click", signInWithGoogle);
+  document.getElementById("sq-signup-btn").addEventListener("click", signUp);
+  document.getElementById("sq-login-btn").addEventListener("click", logIn);
   document.getElementById("sq-signout-btn").addEventListener("click", signOutUser);
-  document.getElementById("sq-group-input").addEventListener("change", (e) => {
-    state.groupCode = e.target.value.trim().toLowerCase().replace(/\s+/g, "-");
-    saveState(state);
-    if (fbUser && state.groupCode) { subscribeToGroup(state.groupCode); pushMyStats(); }
-    else { unsubscribeGroup(); renderFriendsList([]); }
-  });
+  document.getElementById("sq-add-friend-btn").addEventListener("click", addFriend);
 
   if (fbAuth) {
     fbAuth.onAuthStateChanged((user) => {
       fbUser = user;
-      renderAuthUI();
-      if (user && state.groupCode) {
-        subscribeToGroup(state.groupCode);
+      unsubscribeAllFriends();
+      if (user) {
+        fbDb.collection("users").doc(user.uid).get().then((doc) => {
+          myUsername = doc.exists ? (doc.data().username || "") : myUsername;
+          renderAuthUI();
+        });
         pushMyStats();
+        subscribeFriendsList();
       } else {
-        unsubscribeGroup();
+        myUsername = "";
+        renderAuthUI();
         renderFriendsList([]);
       }
     });
@@ -1148,6 +1276,3 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
-```
-
-Zet deze in `index.html` in je repo, dezelfde stap als altijd: potlood-icoon, alles selecteren, plakken, committen.
