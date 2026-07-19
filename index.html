@@ -30,6 +30,9 @@
     --teal: #4f9d94;
     --coral: #c05a3e;
     --violet: #8d7bb5;
+    --crazy: #d1495b;
+    --sociaal: #5b8dc2;
+    --hospitality: #a68a4a;
     --border: #2e343b;
     --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -40,8 +43,9 @@
     max-width: 520px;
     margin: 0 auto;
     min-height: 100vh;
-    padding: 28px 18px 40px;
+    padding: 30px 18px 44px;
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
   }
   #sq-root * { box-sizing: border-box; }
 
@@ -54,9 +58,9 @@
     letter-spacing: 0.14em;
     color: var(--text-dim);
     text-transform: uppercase;
-    padding-bottom: 10px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 18px;
+    margin-bottom: 20px;
   }
   .sq-eyebrow .sq-station { color: var(--amber); }
 
@@ -66,34 +70,56 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-muted);
+    margin: 0 0 4px;
+  }
+  .sq-subtitle {
+    font-size: 11.5px;
+    color: var(--text-dim);
     margin: 0 0 14px;
+    line-height: 1.5;
   }
 
   .sq-tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
+    transition: opacity 0.2s ease;
+  }
+  .sq-tabs.locked {
+    pointer-events: none;
+    opacity: 0.45;
   }
   .sq-tab {
-    flex: 1;
     display: flex;
     align-items: center;
     gap: 6px;
     justify-content: center;
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    padding: 7px 4px;
-    border-radius: 6px;
+    padding: 9px 14px;
+    border-radius: 999px;
     border: 1px solid var(--border);
-    color: var(--text-dim);
+    color: var(--text-muted);
     background: var(--panel);
-    transition: border-color 0.2s, color 0.2s;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.15s cubic-bezier(.34,1.56,.64,1);
   }
+  .sq-tab:active { transform: scale(0.94); }
   .sq-tab.active {
-    color: var(--text-primary);
+    background: color-mix(in srgb, var(--dot-color) 22%, var(--panel));
     border-color: var(--dot-color);
+    color: var(--text-primary);
+  }
+  .sq-tab.shuffle { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 40%, var(--border)); }
+  .sq-tab.shuffle svg { display: block; }
+  .sq-tabs-hint {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
   }
   .sq-dot {
     width: 6px;
@@ -107,37 +133,43 @@
     position: relative;
     background: var(--flap);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 26px 20px;
-    min-height: 96px;
+    border-radius: 18px;
+    padding: 28px 22px;
+    min-height: 100px;
     display: flex;
     align-items: center;
     overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
   }
   .sq-board::after {
     content: "";
     position: absolute;
-    left: 0; right: 0; top: 50%;
+    left: 22px; right: 22px; top: 50%;
     height: 1px;
     background: var(--flap-seam);
-    opacity: 0.6;
+    opacity: 0.5;
   }
   .sq-board::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent 50%, rgba(0,0,0,0.12));
+    background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent 50%, rgba(0,0,0,0.14));
     pointer-events: none;
   }
   #sq-quest-text {
     font-family: var(--font-mono);
     font-size: clamp(14px, 3.6vw, 17px);
-    line-height: 1.55;
+    line-height: 1.6;
     letter-spacing: 0.02em;
     color: var(--text-primary);
     text-transform: uppercase;
     z-index: 1;
   }
+  @keyframes sq-pop {
+    0% { transform: scale(0.97); opacity: 0.55; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .sq-board.sq-pulse { animation: sq-pop 0.4s cubic-bezier(.2,.8,.2,1); }
 
   .sq-meta-row {
     display: flex;
@@ -147,17 +179,18 @@
   .sq-stub {
     flex: 1;
     background: var(--panel);
-    border: 1px dashed var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
   }
   .sq-stub svg { flex-shrink: 0; }
   .sq-stub-value {
     font-family: var(--font-mono);
-    font-size: 18px;
+    font-size: 19px;
     color: var(--amber);
     line-height: 1;
   }
@@ -166,26 +199,22 @@
     color: var(--text-dim);
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
-  .sq-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 14px;
-  }
+  .sq-actions { margin-top: 16px; }
   .sq-btn {
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    padding: 12px 14px;
-    border-radius: 8px;
+    padding: 14px 16px;
+    border-radius: 14px;
     border: 1px solid var(--border);
     background: transparent;
     color: var(--text-primary);
     cursor: pointer;
-    flex: 1;
-    transition: transform 0.08s ease, opacity 0.2s;
+    width: 100%;
+    transition: transform 0.15s cubic-bezier(.34,1.56,.64,1), background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
   }
   .sq-btn:active { transform: scale(0.98); }
   .sq-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
@@ -193,23 +222,27 @@
     background: var(--amber);
     border-color: var(--amber);
     color: #1a1508;
+    box-shadow: 0 8px 20px rgba(232,163,61,0.28);
   }
   .sq-btn-primary.sq-done {
     background: transparent;
     border-color: var(--teal);
     color: var(--teal);
+    box-shadow: none;
   }
   .sq-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.55;
     cursor: not-allowed;
   }
 
-  .sq-log {
-    margin-top: 22px;
-    border-top: 1px solid var(--border);
-    padding-top: 14px;
+  .sq-card {
+    margin-top: 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
   }
-  .sq-log summary {
+  .sq-card summary {
     font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.08em;
@@ -218,11 +251,37 @@
     cursor: pointer;
     list-style: none;
   }
-  .sq-log summary::-webkit-details-marker { display: none; }
-  .sq-log summary::before { content: "▸ "; color: var(--text-dim); }
-  .sq-log[open] summary::before { content: "▾ "; }
+  .sq-card summary::-webkit-details-marker { display: none; }
+  .sq-card summary::before { content: "▸ "; color: var(--text-dim); }
+  .sq-card[open] summary::before { content: "▾ "; }
 
-  .sq-log-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .sq-settings-body { margin-top: 14px; display: flex; flex-direction: column; gap: 16px; }
+  .sq-settings-field label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 7px;
+    font-family: var(--font-mono);
+  }
+  .sq-settings-field input[type="text"] {
+    width: 100%;
+    background: var(--flap);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+  }
+  .sq-settings-field input[type="text"]:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
+  .sq-cat-toggles { display: flex; flex-direction: column; gap: 10px; }
+  .sq-cat-toggle { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-primary); cursor: pointer; }
+  .sq-cat-toggle input[type="checkbox"] { accent-color: var(--amber); width: 16px; height: 16px; }
+  .sq-settings-hint { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+
+  .sq-log-list { margin-top: 12px; display: flex; flex-direction: column; gap: 9px; }
   .sq-log-row {
     display: flex;
     align-items: flex-start;
@@ -244,7 +303,7 @@
   .sq-stats-footer {
     display: flex;
     justify-content: space-between;
-    margin-top: 14px;
+    margin-top: 16px;
     font-size: 11px;
     color: var(--text-dim);
     font-family: var(--font-mono);
@@ -254,7 +313,7 @@
     margin-top: 18px;
     font-size: 11px;
     color: var(--text-dim);
-    line-height: 1.5;
+    line-height: 1.6;
   }
   .sq-reset {
     background: none;
@@ -268,21 +327,23 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .sq-btn { transition: none; }
+    .sq-btn, .sq-tab, .sq-board { transition: none; animation: none; }
   }
 </style>
 </head>
 <body>
 <div id="sq-root">
   <div class="sq-eyebrow">
-    <span class="sq-station">Melbourne Station</span>
+    <span class="sq-station">Sidequest Station</span>
     <span id="sq-day-date"></span>
   </div>
   <h1 class="sq-title">Sidequest van vandaag</h1>
+  <p class="sq-subtitle">Tik een categorie om te kiezen wat voor quest je wilt. Kan tot je "Voltooid" indrukt.</p>
 
   <div class="sq-tabs" id="sq-tabs"></div>
+  <div class="sq-tabs-hint">Tik nogmaals op dezelfde categorie voor een andere quest uit die groep.</div>
 
-  <div class="sq-board">
+  <div class="sq-board" id="sq-board">
     <div id="sq-quest-text" aria-live="polite">Laden...</div>
   </div>
 
@@ -306,10 +367,26 @@
 
   <div class="sq-actions">
     <button class="sq-btn sq-btn-primary" id="sq-complete-btn">Voltooid</button>
-    <button class="sq-btn" id="sq-reroll-btn">Wissel (1x)</button>
   </div>
 
-  <details class="sq-log">
+  <details class="sq-card" id="sq-settings">
+    <summary>Instellingen</summary>
+    <div class="sq-settings-body">
+      <div class="sq-settings-field">
+        <label for="sq-location-input">Locatie</label>
+        <input type="text" id="sq-location-input" placeholder="bijv. Melbourne, Sydney, Breda">
+      </div>
+      <div class="sq-settings-field">
+        <label>Categorieën in de pool</label>
+        <div class="sq-cat-toggles" id="sq-category-toggles"></div>
+      </div>
+      <div class="sq-settings-hint">
+        Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Minstens 1 categorie moet aanstaan.
+      </div>
+    </div>
+  </details>
+
+  <details class="sq-card">
     <summary>Reislog (<span id="sq-log-count">0</span>)</summary>
     <div class="sq-log-list" id="sq-log-list"></div>
   </details>
@@ -330,30 +407,42 @@
 <script>
 (function () {
   const QUESTS = [
-    { id: "m1", category: "melbourne", text: "Loop rond op Queen Victoria Market en proef iets dat je nog nooit hebt gegeten." },
-    { id: "m2", category: "melbourne", text: "Wandel het hoofdpad door de Royal Botanic Gardens, van begin tot eind." },
-    { id: "m3", category: "melbourne", text: "Stap in een tram zonder van tevoren te weten waar je uitstapt." },
-    { id: "m4", category: "melbourne", text: "Zoek Hosier Lane op en bekijk de street art van dichtbij." },
-    { id: "m5", category: "melbourne", text: "Drink een koffie in een steegjescafe in de CBD die je nog niet kent." },
-    { id: "m6", category: "melbourne", text: "Bezoek de leeszaal van State Library Victoria en blijf er minstens 20 minuten." },
-    { id: "m7", category: "melbourne", text: "Wandel van Flinders Street Station naar Fitzroy via Brunswick Street." },
-    { id: "m8", category: "melbourne", text: "Bekijk de bathing boxes in Brighton bij daglicht." },
-    { id: "m9", category: "melbourne", text: "Zoek een rooftop in de CBD op en kijk naar de zonsondergang." },
-    { id: "m10", category: "melbourne", text: "Loop door Chinatown en zoek de oudste gevel of het oudste bord." },
-    { id: "m11", category: "melbourne", text: "Bezoek Federation Square en loop een expositie in ACMI binnen." },
-    { id: "m12", category: "melbourne", text: "Wandel langs de Yarra van Southbank richting Docklands." },
-    { id: "m13", category: "melbourne", text: "Zoek een boekwinkel op die je nog nooit hebt bezocht en blader er 15 minuten." },
-    { id: "m14", category: "melbourne", text: "Bezoek Prahran Market en praat met een verkoper over zijn product." },
-    { id: "m15", category: "melbourne", text: "Loop door Abbotsford Convent en de tuinen eromheen." },
-    { id: "m16", category: "melbourne", text: "Zoek een plek op waar je de skyline van Melbourne goed kunt zien, en maak een foto." },
+    // VERKEN — generic, location-templated
+    { id: "v1", category: "verken", text: "Zoek de bekendste markt in {city} op en proef iets dat je nog nooit hebt gegeten." },
+    { id: "v2", category: "verken", text: "Wandel het langste park of de grootste tuin in {city} van begin tot eind." },
+    { id: "v3", category: "verken", text: "Stap in het openbaar vervoer zonder van tevoren te weten waar je uitstapt." },
+    { id: "v4", category: "verken", text: "Zoek een steegje of achterafstraatje in {city} met opvallende street art of gevels." },
+    { id: "v5", category: "verken", text: "Drink een koffie in een cafe in {city} dat je nog niet kent." },
+    { id: "v6", category: "verken", text: "Bezoek de hoofdbibliotheek van {city} en blijf er minstens 20 minuten." },
+    { id: "v7", category: "verken", text: "Wandel van het centrum van {city} naar een wijk die je nog niet kent." },
+    { id: "v8", category: "verken", text: "Zoek een strand, rivier of waterkant in {city} op, als die er is." },
+    { id: "v9", category: "verken", text: "Zoek een rooftop of hoog punt in {city} op en kijk naar de zonsondergang." },
+    { id: "v10", category: "verken", text: "Loop door het oudste of meest historische deel van {city}." },
+    { id: "v11", category: "verken", text: "Bezoek een museum of galerie in {city} die je nog niet kent." },
+    { id: "v12", category: "verken", text: "Wandel minstens 5 kilometer door een deel van {city} dat je nog niet kent." },
+    { id: "v13", category: "verken", text: "Zoek een boekwinkel op in {city} die je nog niet hebt bezocht." },
+    { id: "v14", category: "verken", text: "Bezoek een lokale markt in {city} en praat met een verkoper over zijn product." },
+    { id: "v15", category: "verken", text: "Zoek een rustige plek in {city} op die weinig toeristen kennen." },
+    { id: "v16", category: "verken", text: "Zoek een plek op waar je de skyline of horizon van {city} goed kunt zien, en maak een foto." },
+    { id: "v17", category: "verken", requiresLocation: "melbourne", text: "Loop rond op Queen Victoria Market en proef iets dat je nog nooit hebt gegeten." },
+    { id: "v18", category: "verken", requiresLocation: "melbourne", text: "Wandel het hoofdpad door de Royal Botanic Gardens, van begin tot eind." },
+    { id: "v19", category: "verken", requiresLocation: "melbourne", text: "Zoek Hosier Lane op en bekijk de street art van dichtbij." },
+    { id: "v20", category: "verken", requiresLocation: "melbourne", text: "Bezoek de leeszaal van State Library Victoria en blijf er minstens 20 minuten." },
+    { id: "v21", category: "verken", requiresLocation: "melbourne", text: "Wandel van Flinders Street Station naar Fitzroy via Brunswick Street." },
+    { id: "v22", category: "verken", requiresLocation: "melbourne", text: "Bekijk de bathing boxes in Brighton bij daglicht." },
+    { id: "v23", category: "verken", requiresLocation: "melbourne", text: "Loop door Chinatown en zoek de oudste gevel of het oudste bord." },
+    { id: "v24", category: "verken", requiresLocation: "melbourne", text: "Bezoek Federation Square en loop een expositie in ACMI binnen." },
+    { id: "v25", category: "verken", requiresLocation: "melbourne", text: "Wandel langs de Yarra van Southbank richting Docklands." },
+    { id: "v26", category: "verken", requiresLocation: "melbourne", text: "Bezoek Prahran Market en praat met een verkoper over zijn product." },
+    { id: "v27", category: "verken", requiresLocation: "melbourne", text: "Loop door Abbotsford Convent en de tuinen eromheen." },
 
-    { id: "f1", category: "fitness", text: "Hardloop minimaal 20 minuten langs de Yarra." },
+    { id: "f1", category: "fitness", text: "Hardloop minimaal 20 minuten langs het water of door een park." },
     { id: "f2", category: "fitness", text: "Doe 4 rondes van 10 push-ups, 15 squats en 20 seconden plank." },
     { id: "f3", category: "fitness", text: "Zoek een outdoor gym op en gebruik een toestel dat je nog nooit hebt geprobeerd." },
     { id: "f4", category: "fitness", text: "Fiets een route van minimaal 10 kilometer." },
     { id: "f5", category: "fitness", text: "Doe 15 minuten stretchen voor het slapengaan." },
     { id: "f6", category: "fitness", text: "Zwem 20 baantjes in een zwembad naar keuze." },
-    { id: "f7", category: "fitness", text: "Wandel een trail in de Dandenong Ranges of een vergelijkbaar bos." },
+    { id: "f7", category: "fitness", text: "Wandel een trail in een bos of heuvelgebied in de buurt." },
     { id: "f8", category: "fitness", text: "Doe 20 minuten shadowboxing of een boksles." },
     { id: "f9", category: "fitness", text: "Neem de trap in plaats van de lift voor minstens 10 verdiepingen bij elkaar." },
     { id: "f10", category: "fitness", text: "Doe 15 minuten yoga zonder video, volledig op gevoel." },
@@ -364,29 +453,78 @@
     { id: "f15", category: "fitness", text: "Wandel minimaal 20 minuten zonder telefoon." },
     { id: "f16", category: "fitness", text: "Test hoelang je een plank kunt volhouden en probeer je record te breken." },
 
-    { id: "w1", category: "wildcard", text: "Stuur een bericht naar iemand die je al weken wilt spreken." },
-    { id: "w2", category: "wildcard", text: "Kook een gerecht met een ingredient dat je nog nooit hebt gebruikt." },
-    { id: "w3", category: "wildcard", text: "Leer 5 woorden Auslan, Australische gebarentaal." },
-    { id: "w4", category: "wildcard", text: "Schrijf 3 dingen op die deze week goed gingen, zonder ze te delen." },
-    { id: "w5", category: "wildcard", text: "Lees 20 pagina's van een boek dat niets met je studie te maken heeft." },
-    { id: "w6", category: "wildcard", text: "Gebruik vandaag minstens 3 Australisch-Engelse uitdrukkingen die je nog niet kende." },
-    { id: "w7", category: "wildcard", text: "Praat 10 minuten met een local over iets anders dan het weer." },
-    { id: "w8", category: "wildcard", text: "Ruim een deel van je koffer of kamer op dat je al dagen negeert." },
-    { id: "w9", category: "wildcard", text: "Zet je telefoon een uur op vliegtuigmodus tijdens wakkere uren." },
-    { id: "w10", category: "wildcard", text: "Schrijf een korte review van een plek die je deze week hebt bezocht." },
-    { id: "w11", category: "wildcard", text: "Bel iemand thuis in plaats van een appje te sturen." },
-    { id: "w12", category: "wildcard", text: "Noteer 1 ding dat je zou doen als angst geen rol speelde, en zet een eerste stap." },
-    { id: "w13", category: "wildcard", text: "Probeer een gerecht uit de Australische keuken dat je nog niet kent." },
-    { id: "w14", category: "wildcard", text: "Maak een begroting voor deze week en controleer hem morgenavond." },
-    { id: "w15", category: "wildcard", text: "Zoek een lokale markt of buurt op waar je nog nooit bent geweest." },
-    { id: "w16", category: "wildcard", text: "Schrijf in 3 zinnen op wat je deze week hebt geleerd." }
+    { id: "a1", category: "algemeen", text: "Stuur een bericht naar iemand die je al weken wilt spreken." },
+    { id: "a2", category: "algemeen", text: "Kook een gerecht met een ingredient dat je nog nooit hebt gebruikt." },
+    { id: "a3", category: "algemeen", text: "Leer 5 woorden in een taal die je nog niet spreekt." },
+    { id: "a4", category: "algemeen", text: "Schrijf 3 dingen op die deze week goed gingen, zonder ze te delen." },
+    { id: "a5", category: "algemeen", text: "Lees 20 pagina's van een boek dat niets met je studie te maken heeft." },
+    { id: "a6", category: "algemeen", text: "Gebruik vandaag minstens 3 nieuwe lokale uitdrukkingen die je nog niet kende." },
+    { id: "a7", category: "algemeen", text: "Praat 10 minuten met een local over iets anders dan het weer." },
+    { id: "a8", category: "algemeen", text: "Ruim een deel van je koffer of kamer op dat je al dagen negeert." },
+    { id: "a9", category: "algemeen", text: "Zet je telefoon een uur op vliegtuigmodus tijdens wakkere uren." },
+    { id: "a10", category: "algemeen", text: "Schrijf een korte review van een plek die je deze week hebt bezocht." },
+    { id: "a11", category: "algemeen", text: "Bel iemand thuis in plaats van een appje te sturen." },
+    { id: "a12", category: "algemeen", text: "Noteer 1 ding dat je zou doen als angst geen rol speelde, en zet een eerste stap." },
+    { id: "a13", category: "algemeen", text: "Probeer een gerecht uit de lokale keuken dat je nog niet kent." },
+    { id: "a14", category: "algemeen", text: "Maak een begroting voor deze week en controleer hem morgenavond." },
+    { id: "a15", category: "algemeen", text: "Zoek een lokale markt of buurt op waar je nog nooit bent geweest." },
+    { id: "a16", category: "algemeen", text: "Schrijf in 3 zinnen op wat je deze week hebt geleerd." },
+
+    { id: "c1", category: "crazy", text: "Neem een koude douche van minimaal 2 minuten, zonder opwarmen vooraf." },
+    { id: "c2", category: "crazy", text: "Zing hardop een liedje op een openbare plek." },
+    { id: "c3", category: "crazy", text: "Praat vandaag met 5 vreemden, ieder minstens 2 minuten." },
+    { id: "c4", category: "crazy", text: "Eet iets extreem pittigs en beschrijf achteraf je eigen reactie." },
+    { id: "c5", category: "crazy", text: "Vraag een vreemde om een foto van je te maken op de gekste pose die je kunt bedenken." },
+    { id: "c6", category: "crazy", text: "Doe een volledige dag zonder sociale media." },
+    { id: "c7", category: "crazy", text: "Vraag 3 mensen vandaag naar het beste advies dat ze ooit kregen." },
+    { id: "c8", category: "crazy", text: "Improviseer 30 seconden dans, ergens waar mensen bij zijn." },
+    { id: "c9", category: "crazy", text: "Bestel iets willekeurigs van een menu zonder de naam op te zoeken." },
+    { id: "c10", category: "crazy", text: "Doe vandaag het tegenovergestelde van je normale ochtendroutine." },
+    { id: "c11", category: "crazy", text: "Geef een onbekende in persoon een oprecht compliment." },
+    { id: "c12", category: "crazy", text: "Slaap een nacht met je telefoon buiten de slaapkamer." },
+    { id: "c13", category: "crazy", text: "Schrijf een briefje met iets aardigs en laat het ergens achter voor een vreemde." },
+    { id: "c14", category: "crazy", text: "Doe een activiteit die je normaal te kinderachtig zou vinden, zoals een schommel of speeltuin." },
+
+    { id: "s1", category: "sociaal", text: "Nodig iemand uit voor koffie of een maaltijd die je nog niet goed kent." },
+    { id: "s2", category: "sociaal", text: "Ga naar een buurtevenement of meetup die je nog nooit hebt bezocht." },
+    { id: "s3", category: "sociaal", text: "Bel een oude vriend die je een tijd niet gesproken hebt." },
+    { id: "s4", category: "sociaal", text: "Vraag een collega of medestudent om samen te lunchen." },
+    { id: "s5", category: "sociaal", text: "Doe mee aan een groepsactiviteit of les die je nog nooit hebt gedaan." },
+    { id: "s6", category: "sociaal", text: "Stel jezelf voor aan iemand nieuw op je werk, studie of in de buurt." },
+    { id: "s7", category: "sociaal", text: "Vraag iemand om je iets te leren dat hij of zij goed kan." },
+    { id: "s8", category: "sociaal", text: "Ga naar een lokale bar of cafe en maak een praatje met iemand aan de bar." },
+    { id: "s9", category: "sociaal", text: "Nodig iemand uit voor een wandeling." },
+    { id: "s10", category: "sociaal", text: "Doe een teamactiviteit of sport samen met anderen." },
+    { id: "s11", category: "sociaal", text: "Vraag 3 mensen hoe hun week is gegaan, en luister echt." },
+    { id: "s12", category: "sociaal", text: "Zoek een taal- of gespreksgroep op in je omgeving." },
+    { id: "s13", category: "sociaal", text: "Deel iets persoonlijks met iemand die je pas kort kent." },
+    { id: "s14", category: "sociaal", text: "Organiseer een korte hangout met mensen uit je omgeving." },
+
+    { id: "h1", category: "hospitality", text: "Observeer 15 minuten hoe een concierge of receptie te werk gaat." },
+    { id: "h2", category: "hospitality", text: "Lees een artikel over een hoteltrend en vat het in 3 zinnen samen." },
+    { id: "h3", category: "hospitality", text: "Oefen een korte pitch waarin je jezelf voorstelt als toekomstig concierge." },
+    { id: "h4", category: "hospitality", text: "Zoek uit wat de sterkste marktpositie is van een hotelketen in jouw omgeving." },
+    { id: "h5", category: "hospitality", text: "Schrijf 3 vragen op die je een general manager zou stellen als je de kans kreeg." },
+    { id: "h6", category: "hospitality", text: "Bekijk hoe een restaurant of hotel gasten begroet, en noteer wat opvalt." },
+    { id: "h7", category: "hospitality", text: "Zoek een voorbeeld van uitstekende klantenservice op en beschrijf waarom het werkte." },
+    { id: "h8", category: "hospitality", text: "Oefen een lastig gastgesprek na, bijvoorbeeld een klacht afhandelen." },
+    { id: "h9", category: "hospitality", text: "Leer 5 nieuwe vaktermen uit de hospitality in het Engels." },
+    { id: "h10", category: "hospitality", text: "Bekijk een hotellobby of receptie kritisch als geheime gast, en noteer 3 verbeterpunten." },
+    { id: "h11", category: "hospitality", text: "Schrijf een korte reflectie over wat je deze week hebt geleerd over gastvrijheid." },
+    { id: "h12", category: "hospitality", text: "Zoek uit hoe een hotel in jouw omgeving zich onderscheidt van de concurrentie." },
+    { id: "h13", category: "hospitality", text: "Vraag een medewerker in de horeca naar zijn grootste uitdaging in het werk." },
+    { id: "h14", category: "hospitality", text: "Bekijk een review van een hotel en analyseer waarin de gastervaring tekortschoot." }
   ];
 
   const CATEGORY_META = {
-    melbourne: { label: "Melbourne", varName: "--teal" },
+    verken: { label: "Verken", varName: "--teal" },
     fitness: { label: "Fitness", varName: "--coral" },
-    wildcard: { label: "Wildcard", varName: "--violet" }
+    algemeen: { label: "Algemeen", varName: "--violet" },
+    crazy: { label: "Crazy", varName: "--crazy" },
+    sociaal: { label: "Sociaal", varName: "--sociaal" },
+    hospitality: { label: "Hospitality", varName: "--hospitality" }
   };
+  const DEFAULT_ACTIVE = ["verken", "fitness", "algemeen"];
   const MONTHS = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
   const STORAGE_KEY = "sidequest-state";
 
@@ -403,29 +541,79 @@
     const db = new Date(b+"T00:00:00");
     return Math.round((db-da)/86400000);
   }
+  function renderQuestText(template, state) {
+    const city = (state.location || "").trim() || "je omgeving";
+    return template.replace(/\{city\}/g, city);
+  }
+  function isEligible(q, state) {
+    if (!state.activeCategories.includes(q.category)) return false;
+    if (q.requiresLocation) {
+      const loc = (state.location || "").toLowerCase();
+      if (!loc.includes(q.requiresLocation)) return false;
+    }
+    return true;
+  }
   function pickQuest(state, excludeCategory) {
-    const pool = QUESTS.filter(q => !state.recentIds.includes(q.id));
-    const usable = pool.length ? pool : QUESTS;
-    let candidates = excludeCategory ? usable.filter(q => q.category !== excludeCategory) : usable;
-    if (!candidates.length) candidates = usable;
+    const eligible = QUESTS.filter(q => isEligible(q, state));
+    const base = eligible.length ? eligible : QUESTS.filter(q => state.activeCategories.includes(q.category));
+    const usable = base.length ? base : QUESTS;
+    const pool = usable.filter(q => !state.recentIds.includes(q.id));
+    const finalPool = pool.length ? pool : usable;
+    let candidates = excludeCategory ? finalPool.filter(q => q.category !== excludeCategory) : finalPool;
+    if (!candidates.length) candidates = finalPool;
     return candidates[Math.floor(Math.random()*candidates.length)];
   }
+  function pickFromCategory(state, cat) {
+    const eligible = QUESTS.filter(q => q.category === cat && isEligible(q, state));
+    const base = eligible.length ? eligible : QUESTS.filter(q => q.category === cat);
+    const pool = base.filter(q => !state.recentIds.includes(q.id));
+    const finalPool = pool.length ? pool : base;
+    if (!finalPool.length) return pickQuest(state, null);
+    return finalPool[Math.floor(Math.random()*finalPool.length)];
+  }
   function createInitialState(today) {
-    const first = QUESTS[Math.floor(Math.random()*QUESTS.length)];
+    const seedState = { activeCategories: DEFAULT_ACTIVE, location: "", recentIds: [] };
+    const first = pickQuest(seedState, null);
     return {
-      version: 1,
+      version: 3,
       lastDate: today,
       dayNumber: 1,
-      currentQuest: { id: first.id, category: first.category, text: first.text },
+      location: "",
+      activeCategories: DEFAULT_ACTIVE.slice(),
+      currentQuest: { id: first.id, category: first.category, text: renderQuestText(first.text, seedState) },
       completedToday: false,
-      rerollUsedToday: false,
       streak: 0,
       longestStreak: 0,
       totalCompleted: 0,
-      categoryCounts: { melbourne: 0, fitness: 0, wildcard: 0 },
+      categoryCounts: { verken: 0, fitness: 0, algemeen: 0, crazy: 0, sociaal: 0, hospitality: 0 },
       recentIds: [first.id],
       log: []
     };
+  }
+  function migrateState(state) {
+    if (typeof state.location !== "string") state.location = "";
+    if (!Array.isArray(state.activeCategories)) state.activeCategories = DEFAULT_ACTIVE.slice();
+    const catMap = { melbourne: "verken", wildcard: "algemeen" };
+    state.activeCategories = state.activeCategories.map(c => catMap[c] || c);
+    if (state.currentQuest && catMap[state.currentQuest.category]) {
+      state.currentQuest.category = catMap[state.currentQuest.category];
+    }
+    const cc = state.categoryCounts || {};
+    state.categoryCounts = {
+      verken: cc.verken || cc.melbourne || 0,
+      fitness: cc.fitness || 0,
+      algemeen: cc.algemeen || cc.wildcard || 0,
+      crazy: cc.crazy || 0,
+      sociaal: cc.sociaal || 0,
+      hospitality: cc.hospitality || 0
+    };
+    if (Array.isArray(state.log)) {
+      state.log.forEach(e => { if (catMap[e.category]) e.category = catMap[e.category]; });
+    } else {
+      state.log = [];
+    }
+    delete state.rerollUsedToday;
+    return state;
   }
   function saveState(state) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -442,7 +630,8 @@
     }
     let state;
     try { state = JSON.parse(raw); } catch (e) { state = createInitialState(today); saveState(state); return state; }
-    if (state.lastDate === today) return state;
+    state = migrateState(state);
+    if (state.lastDate === today) { saveState(state); return state; }
 
     const diff = daysBetween(state.lastDate, today);
     state.log.unshift({
@@ -457,12 +646,11 @@
     state.dayNumber += 1;
     state.lastDate = today;
     state.completedToday = false;
-    state.rerollUsedToday = false;
 
     const next = pickQuest(state, state.currentQuest.category);
     state.recentIds.push(next.id);
-    if (state.recentIds.length > 12) state.recentIds = state.recentIds.slice(-12);
-    state.currentQuest = { id: next.id, category: next.category, text: next.text };
+    if (state.recentIds.length > 20) state.recentIds = state.recentIds.slice(-20);
+    state.currentQuest = { id: next.id, category: next.category, text: renderQuestText(next.text, state) };
 
     saveState(state);
     return state;
@@ -498,18 +686,36 @@
 
     const tabsEl = document.getElementById("sq-tabs");
     tabsEl.innerHTML = "";
+    tabsEl.classList.toggle("locked", state.completedToday);
+    const shownCats = new Set(state.activeCategories);
+    shownCats.add(state.currentQuest.category);
     Object.keys(CATEGORY_META).forEach(cat => {
+      if (!shownCats.has(cat)) return;
       const meta = CATEGORY_META[cat];
       const tab = document.createElement("div");
-      tab.className = "sq-tab" + (state.currentQuest.category === cat ? " active" : "");
+      const isCurrent = state.currentQuest.category === cat;
+      tab.className = "sq-tab" + (isCurrent ? " active" : "");
       tab.style.setProperty("--dot-color", "var(" + meta.varName + ")");
       tab.innerHTML = '<span class="sq-dot"></span>' + meta.label;
+      tab.addEventListener("click", () => selectCategory(cat));
       tabsEl.appendChild(tab);
     });
+    const shuffleTab = document.createElement("div");
+    shuffleTab.className = "sq-tab shuffle";
+    shuffleTab.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg> Willekeurig';
+    shuffleTab.addEventListener("click", () => selectCategory(null));
+    tabsEl.appendChild(shuffleTab);
 
     const questEl = document.getElementById("sq-quest-text");
     if (animateQuest) scrambleText(questEl, state.currentQuest.text);
     else questEl.textContent = state.currentQuest.text;
+
+    if (animateQuest) {
+      const boardEl = document.getElementById("sq-board");
+      boardEl.classList.remove("sq-pulse");
+      void boardEl.offsetWidth;
+      boardEl.classList.add("sq-pulse");
+    }
 
     document.getElementById("sq-streak-value").textContent = state.streak;
     document.getElementById("sq-longest-value").textContent = state.longestStreak;
@@ -519,14 +725,15 @@
     completeBtn.disabled = state.completedToday;
     completeBtn.classList.toggle("sq-done", state.completedToday);
 
-    const rerollBtn = document.getElementById("sq-reroll-btn");
-    rerollBtn.disabled = state.rerollUsedToday || state.completedToday;
-    rerollBtn.textContent = state.rerollUsedToday ? "Al gewisseld" : "Wissel (1x)";
-
     document.getElementById("sq-total-label").textContent = state.totalCompleted + " quests voltooid";
     const cc = state.categoryCounts;
     document.getElementById("sq-breakdown-label").textContent =
-      "M " + (cc.melbourne||0) + " · F " + (cc.fitness||0) + " · W " + (cc.wildcard||0);
+      "V " + (cc.verken||0) + " · F " + (cc.fitness||0) + " · A " + (cc.algemeen||0) + " · C " + (cc.crazy||0) + " · S " + (cc.sociaal||0) + " · H " + (cc.hospitality||0);
+
+    const locInput = document.getElementById("sq-location-input");
+    if (document.activeElement !== locInput) locInput.value = state.location || "";
+
+    renderCategoryToggles();
 
     const logListEl = document.getElementById("sq-log-list");
     document.getElementById("sq-log-count").textContent = state.log.length;
@@ -551,6 +758,44 @@
     }
   }
 
+  function renderCategoryToggles() {
+    const container = document.getElementById("sq-category-toggles");
+    container.innerHTML = "";
+    Object.keys(CATEGORY_META).forEach(cat => {
+      const meta = CATEGORY_META[cat];
+      const row = document.createElement("label");
+      row.className = "sq-cat-toggle";
+      const checked = state.activeCategories.includes(cat) ? "checked" : "";
+      row.innerHTML = '<input type="checkbox" data-cat="' + cat + '" ' + checked + '/><span class="sq-dot" style="background:var(' + meta.varName + ')"></span>' + meta.label;
+      container.appendChild(row);
+    });
+    container.querySelectorAll("input[type=checkbox]").forEach(cb => {
+      cb.addEventListener("change", onCategoryToggle);
+    });
+  }
+
+  function onCategoryToggle(e) {
+    const cat = e.target.getAttribute("data-cat");
+    if (e.target.checked) {
+      if (!state.activeCategories.includes(cat)) state.activeCategories.push(cat);
+    } else {
+      if (state.activeCategories.length <= 1) { e.target.checked = true; return; }
+      state.activeCategories = state.activeCategories.filter(c => c !== cat);
+    }
+    saveState(state);
+    render(false);
+  }
+
+  function selectCategory(cat) {
+    if (state.completedToday) return;
+    const next = cat ? pickFromCategory(state, cat) : pickQuest(state, state.currentQuest.category);
+    state.recentIds.push(next.id);
+    if (state.recentIds.length > 20) state.recentIds = state.recentIds.slice(-20);
+    state.currentQuest = { id: next.id, category: next.category, text: renderQuestText(next.text, state) };
+    saveState(state);
+    render(true);
+  }
+
   function markComplete() {
     if (state.completedToday) return;
     state.completedToday = true;
@@ -559,17 +804,6 @@
     state.categoryCounts[cat] = (state.categoryCounts[cat] || 0) + 1;
     saveState(state);
     render(false);
-  }
-
-  function reroll() {
-    if (state.rerollUsedToday || state.completedToday) return;
-    const next = pickQuest(state, state.currentQuest.category);
-    state.recentIds.push(next.id);
-    if (state.recentIds.length > 12) state.recentIds = state.recentIds.slice(-12);
-    state.currentQuest = { id: next.id, category: next.category, text: next.text };
-    state.rerollUsedToday = true;
-    saveState(state);
-    render(true);
   }
 
   let resetArmed = false;
@@ -582,15 +816,22 @@
       return;
     }
     resetArmed = false;
+    const keepLocation = state.location;
+    const keepCats = state.activeCategories.slice();
     state = createInitialState(todayStr());
+    state.location = keepLocation;
+    state.activeCategories = keepCats;
     saveState(state);
     render(true);
     document.getElementById("sq-reset-btn").textContent = "Voortgang wissen";
   }
 
   document.getElementById("sq-complete-btn").addEventListener("click", markComplete);
-  document.getElementById("sq-reroll-btn").addEventListener("click", reroll);
   document.getElementById("sq-reset-btn").addEventListener("click", resetProgress);
+  document.getElementById("sq-location-input").addEventListener("change", (e) => {
+    state.location = e.target.value.trim();
+    saveState(state);
+  });
 
   render(true);
 })();
