@@ -590,7 +590,7 @@
             <div class="sq-cat-toggles" id="sq-category-toggles"></div>
           </div>
           <div class="sq-settings-hint">
-            Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Bij een nieuwe locatie zoekt de app zelf actuele plekken in de buurt op (via OpenStreetMap) en mixt die tussen je Verken-quests. Dat ververst zichzelf elke 30 dagen automatisch. Minstens 1 categorie moet aanstaan.
+            Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Bij een nieuwe locatie zoekt de app zelf actuele plekken in de buurt op (via OpenStreetMap) en mixt die tussen je Verken-quests. Dat ververst zichzelf elke 7 dagen automatisch. Minstens 1 categorie moet aanstaan.
           </div>
         </div>
       </details>
@@ -765,7 +765,7 @@
   const MONTHS = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
   const STORAGE_KEY = "sidequest-state";
   const DYNAMIC_CACHE_PREFIX = "sq-dynamic:";
-  const DYNAMIC_CACHE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+  const DYNAMIC_CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
   let dynamicVerkenQuests = [];
 
   function normalizeLocationKey(loc) {
