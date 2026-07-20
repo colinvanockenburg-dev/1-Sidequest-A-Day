@@ -590,7 +590,7 @@
             <div class="sq-cat-toggles" id="sq-category-toggles"></div>
           </div>
           <div class="sq-settings-hint">
-            Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Bij een nieuwe locatie zoekt de app zelf bekende plekken in de buurt op (via Wikipedia) en mixt die tussen je Verken-quests. Minstens 1 categorie moet aanstaan.
+            Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Bij een nieuwe locatie zoekt de app zelf actuele plekken in de buurt op (via OpenStreetMap) en mixt die tussen je Verken-quests. Minstens 1 categorie moet aanstaan.
           </div>
         </div>
       </details>
@@ -796,9 +796,46 @@
     (name, city) => "Loop naar " + name + " en bekijk het van dichtbij.",
     (name, city) => "Zoek uit waarom " + name + " de moeite waard is, en ga zelf kijken."
   ];
-  async function fetchDynamicQuestsForLocation(loc) {
-    const cityQuery = loc.trim();
-    if (!cityQuery) return [];
+  function osmPoiToQuestText(tags, name, city) {
+    if (tags.amenity === "marketplace") return "Loop rond op " + name + " en proef iets dat je nog nooit hebt gegeten.";
+    if (tags.amenity === "cafe") return "Drink een koffie bij " + name + ", een cafe dat je nog niet kent.";
+    if (tags.tourism === "museum" || tags.tourism === "gallery") return "Bezoek " + name + " en loop een expositie binnen.";
+    if (tags.tourism === "viewpoint") return "Zoek " + name + " op en geniet van het uitzicht.";
+    if (tags.tourism === "attraction") return "Bezoek " + name + ", een bekende plek in " + city + ".";
+    if (tags.leisure === "park" || tags.leisure === "garden") return "Wandel door " + name + " van begin tot eind.";
+    if (tags.shop === "books") return "Zoek boekwinkel " + name + " op en blader er 15 minuten.";
+    if (tags.historic) return "Zoek " + name + " op, een historische plek in " + city + ".";
+    return "Bezoek " + name + " in " + city + ".";
+  }
+  async function geocodeLocation(query) {
+    const url = "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" + encodeURIComponent(query);
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!data.length) return null;
+    return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+  }
+  async function fetchOsmPOIs(lat, lon) {
+    const query = "[out:json][timeout:20];(" +
+      "node[\"amenity\"=\"marketplace\"](around:4000," + lat + "," + lon + ");" +
+      "node[\"amenity\"=\"cafe\"](around:2000," + lat + "," + lon + ");" +
+      "node[\"tourism\"=\"museum\"](around:5000," + lat + "," + lon + ");" +
+      "node[\"tourism\"=\"gallery\"](around:5000," + lat + "," + lon + ");" +
+      "node[\"tourism\"=\"viewpoint\"](around:5000," + lat + "," + lon + ");" +
+      "node[\"tourism\"=\"attraction\"](around:5000," + lat + "," + lon + ");" +
+      "node[\"leisure\"=\"park\"](around:4000," + lat + "," + lon + ");" +
+      "node[\"leisure\"=\"garden\"](around:4000," + lat + "," + lon + ");" +
+      "node[\"shop\"=\"books\"](around:3000," + lat + "," + lon + ");" +
+      "node[\"historic\"](around:4000," + lat + "," + lon + ");" +
+      ");out center 60;";
+    const res = await fetch("https://overpass-api.de/api/interpreter", {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: query
+    });
+    const data = await res.json();
+    return (data.elements || []).filter(e => e.tags && e.tags.name);
+  }
+  async function fetchWikipediaFallback(cityQuery) {
     try {
       const coordUrl = "https://en.wikipedia.org/w/api.php?action=query&prop=coordinates&titles=" + encodeURIComponent(cityQuery) + "&format=json&origin=*";
       const coordRes = await fetch(coordUrl);
@@ -809,22 +846,48 @@
       if (!page || typeof page.missing !== "undefined" || !page.coordinates || !page.coordinates.length) return [];
       const lat = page.coordinates[0].lat;
       const lon = page.coordinates[0].lon;
-
-      const geoUrl = "https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=" + lat + "%7C" + lon + "&gsradius=6000&gslimit=25&format=json&origin=*";
+      const geoUrl = "https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=" + lat + "%7C" + lon + "&gsradius=6000&gslimit=20&format=json&origin=*";
       const geoRes = await fetch(geoUrl);
       const geoData = await geoRes.json();
       const results = (geoData.query && geoData.query.geosearch) || [];
-
       const cityNameLower = cityQuery.toLowerCase();
-      const filtered = results.filter(r => r.dist > 150 && r.title.toLowerCase() !== cityNameLower);
-      const picked = filtered.slice(0, 16);
-
-      return picked.map((r, i) => ({
-        id: "dyn-" + normalizeLocationKey(loc) + "-" + i,
-        category: "verken",
-        dynamic: true,
-        text: DYNAMIC_TEMPLATES[i % DYNAMIC_TEMPLATES.length](r.title, cityQuery)
-      }));
+      return results.filter(r => r.dist > 150 && r.title.toLowerCase() !== cityNameLower).map(r => r.title);
+    } catch (e) { return []; }
+  }
+  async function fetchDynamicQuestsForLocation(loc) {
+    const cityQuery = loc.trim();
+    if (!cityQuery) return [];
+    try {
+      const coords = await geocodeLocation(cityQuery);
+      if (!coords) return [];
+      let pois = await fetchOsmPOIs(coords.lat, coords.lon);
+      const quests = [];
+      const seenNames = new Set();
+      pois.forEach((poi) => {
+        const name = poi.tags.name;
+        if (seenNames.has(name)) return;
+        seenNames.add(name);
+        quests.push({
+          id: "dyn-osm-" + normalizeLocationKey(loc) + "-" + quests.length,
+          category: "verken",
+          dynamic: true,
+          text: osmPoiToQuestText(poi.tags, name, cityQuery)
+        });
+      });
+      if (quests.length < 6) {
+        const wikiTitles = await fetchWikipediaFallback(cityQuery);
+        wikiTitles.forEach((title, i) => {
+          if (seenNames.has(title)) return;
+          seenNames.add(title);
+          quests.push({
+            id: "dyn-wiki-" + normalizeLocationKey(loc) + "-" + i,
+            category: "verken",
+            dynamic: true,
+            text: DYNAMIC_TEMPLATES[i % DYNAMIC_TEMPLATES.length](title, cityQuery)
+          });
+        });
+      }
+      return quests.slice(0, 20);
     } catch (e) {
       console.error("Locatie-suggesties ophalen mislukt", e);
       return [];
