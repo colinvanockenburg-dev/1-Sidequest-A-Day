@@ -84,6 +84,22 @@
     line-height: 1.5;
   }
 
+  .sq-nav { display: flex; gap: 8px; margin-bottom: 22px; }
+  .sq-nav-btn {
+    flex: 1;
+    padding: 11px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .sq-nav-btn.active { background: var(--amber); border-color: var(--amber); color: #2E2419; }
+
   .sq-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -267,23 +283,18 @@
     border: 1px solid var(--border);
   }
 
+  .sq-auth-actions { display: flex; gap: 8px; margin-top: 4px; }
+  .sq-auth-actions .sq-btn { width: auto; flex: 1; padding: 12px 14px; font-size: 14px; }
+  .sq-auth-error { font-size: 11.5px; color: var(--crazy); min-height: 14px; margin-top: 8px; }
+
   .sq-friends-me {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 14px;
-  }
-  .sq-friends-me img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: var(--flap);
+    margin-bottom: 16px;
   }
   .sq-friends-me span { flex: 1; font-size: 13px; color: var(--text-primary); }
-  .sq-auth-actions { display: flex; gap: 8px; margin-top: 4px; }
-  .sq-auth-actions .sq-btn { width: auto; flex: 1; padding: 12px 14px; font-size: 14px; }
-  .sq-auth-error { font-size: 11.5px; color: var(--crazy); min-height: 14px; margin-top: 8px; }
+
   .sq-add-friend-row { display: flex; gap: 8px; }
   .sq-add-friend-row input { flex: 1; }
   .sq-add-friend-row button {
@@ -297,6 +308,17 @@
     font-size: 13px;
     cursor: pointer;
   }
+
+  .sq-friends-list { margin-top: 18px; }
+  .sq-friend-card {
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+  }
+  .sq-friend-card:last-child { border-bottom: none; }
+  .sq-friend-row-top { display: flex; align-items: center; gap: 10px; }
+  .sq-friend-name { flex: 1; color: var(--text-primary); font-weight: 600; font-size: 14px; }
+  .sq-friend-streak { font-family: var(--font-display); font-weight: 700; color: var(--amber); min-width: 20px; text-align: right; }
+  .sq-friend-check { color: var(--teal); font-family: var(--font-mono); font-size: 12px; width: 14px; text-align: center; }
   .sq-friend-remove {
     background: none;
     border: none;
@@ -306,27 +328,29 @@
     line-height: 1;
     padding: 0 2px;
   }
-  .sq-friends-list { margin-top: 14px; }
-  .sq-friend-row {
+  .sq-friend-history { margin-top: 8px; }
+  .sq-friend-history summary {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    list-style: none;
+  }
+  .sq-friend-history summary::-webkit-details-marker { display: none; }
+  .sq-friend-history summary::before { content: "▸ "; }
+  .sq-friend-history[open] summary::before { content: "▾ "; }
+  .sq-friend-history-row {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 5px 0;
   }
-  .sq-friend-row:last-child { border-bottom: none; }
-  .sq-friend-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: var(--flap);
-    flex-shrink: 0;
-  }
-  .sq-friend-name { flex: 1; color: var(--text-primary); }
-  .sq-friend-streak { font-family: var(--font-display); font-weight: 700; color: var(--amber); min-width: 20px; text-align: right; }
-  .sq-friend-check { color: var(--teal); font-family: var(--font-mono); font-size: 12px; width: 14px; text-align: center; }
+  .sq-friend-history-row .sq-dot { margin-top: 5px; }
+  .sq-friend-history-text { flex: 1; }
 
   .sq-btn {
     font-family: var(--font-sans);
@@ -390,17 +414,19 @@
     margin-bottom: 7px;
     font-family: var(--font-mono);
   }
-  .sq-settings-field input[type="text"] {
+  .sq-settings-field input[type="text"],
+  .sq-settings-field input[type="password"] {
     width: 100%;
     background: var(--flap);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 10px 12px;
-    color: var(--text-primary);
+    color: var(--board-text);
     font-family: var(--font-sans);
     font-size: 14px;
   }
-  .sq-settings-field input[type="text"]:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
+  .sq-settings-field input[type="text"]:focus-visible,
+  .sq-settings-field input[type="password"]:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
   .sq-cat-toggles { display: flex; flex-direction: column; gap: 10px; }
   .sq-cat-toggle { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-primary); cursor: pointer; }
   .sq-cat-toggle input[type="checkbox"] { accent-color: var(--amber); width: 16px; height: 16px; }
@@ -458,126 +484,139 @@
 </head>
 <body>
 <div id="sq-root">
-  <div class="sq-eyebrow">
-    <span class="sq-station">Sidequest Station</span>
-    <span id="sq-day-date"></span>
-  </div>
-  <h1 class="sq-title">Sidequest van vandaag</h1>
-  <p class="sq-subtitle">Tik een categorie om te kiezen wat voor quest je wilt. Kan tot je "Voltooid" indrukt.</p>
 
-  <div class="sq-tabs" id="sq-tabs"></div>
-  <div class="sq-tabs-hint">Tik nogmaals op dezelfde categorie voor een andere quest uit die groep.</div>
-
-  <div class="sq-board" id="sq-board">
-    <div id="sq-quest-text" aria-live="polite">Laden...</div>
-  </div>
-
-  <div class="sq-meta-row">
-    <div class="sq-stub">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C12 2 6 9 6 14C6 17.3137 8.68629 20 12 20C15.3137 20 18 17.3137 18 14C18 9 12 2 12 2Z" fill="#E2A63F" opacity="0.9"/>
-      </svg>
-      <div>
-        <div class="sq-stub-value" id="sq-streak-value">0</div>
-        <div class="sq-stub-label">dagen op rij</div>
-      </div>
+  <div id="sq-auth-gate">
+    <div class="sq-eyebrow">
+      <span class="sq-station">Sidequest Station</span>
     </div>
-    <div class="sq-stub">
-      <div>
-        <div class="sq-stub-value" id="sq-longest-value">0</div>
-        <div class="sq-stub-label">langste reeks</div>
-      </div>
+    <h1 class="sq-title">Log in om te beginnen</h1>
+    <p class="sq-subtitle">Maak een account of log in om je dagelijkse sidequest te zien en vrienden toe te voegen.</p>
+    <div class="sq-settings-field">
+      <label for="sq-username-input">Gebruikersnaam</label>
+      <input type="text" id="sq-username-input" placeholder="bijv. colin92" autocomplete="username">
     </div>
+    <div class="sq-settings-field">
+      <label for="sq-password-input">Wachtwoord</label>
+      <input type="password" id="sq-password-input" placeholder="minstens 6 tekens" autocomplete="current-password">
+    </div>
+    <div class="sq-auth-actions">
+      <button class="sq-btn sq-btn-primary" id="sq-signup-btn" type="button">Account aanmaken</button>
+      <button class="sq-btn" id="sq-login-btn" type="button">Inloggen</button>
+    </div>
+    <div class="sq-auth-error" id="sq-auth-error"></div>
   </div>
 
-  <div class="sq-proof" id="sq-proof">
-    <input type="file" accept="image/*" capture="environment" id="sq-photo-input" style="display:none">
-    <div class="sq-proof-empty" id="sq-proof-empty">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-      <span>Maak een bewijsfoto, nodig om te kunnen voltooien</span>
+  <div id="sq-app" style="display:none;">
+    <div class="sq-eyebrow">
+      <span class="sq-station">Sidequest Station</span>
+      <span id="sq-day-date"></span>
     </div>
-    <div class="sq-proof-filled" id="sq-proof-filled" style="display:none;">
-      <img id="sq-proof-thumb" alt="Bewijsfoto van je sidequest">
-      <span class="sq-proof-filled-text">Bewijsfoto toegevoegd</span>
-      <button type="button" class="sq-proof-retake" id="sq-proof-retake">Andere foto</button>
+
+    <div class="sq-nav">
+      <button type="button" class="sq-nav-btn active" id="sq-nav-quest" data-screen="quest">Vandaag</button>
+      <button type="button" class="sq-nav-btn" id="sq-nav-friends" data-screen="friends">Vrienden</button>
     </div>
-  </div>
 
-  <div class="sq-actions">
-    <button class="sq-btn sq-btn-primary" id="sq-complete-btn">Voltooid</button>
-  </div>
+    <div id="sq-screen-quest">
+      <h1 class="sq-title">Sidequest van vandaag</h1>
+      <p class="sq-subtitle">Tik een categorie om te kiezen wat voor quest je wilt. Kan tot je "Voltooid" indrukt.</p>
 
-  <details class="sq-card" id="sq-settings">
-    <summary>Instellingen</summary>
-    <div class="sq-settings-body">
-      <div class="sq-settings-field">
-        <label for="sq-location-input">Locatie</label>
-        <input type="text" id="sq-location-input" placeholder="bijv. Melbourne, Sydney, Breda">
-      </div>
-      <div class="sq-settings-field">
-        <label>Categorieën in de pool</label>
-        <div class="sq-cat-toggles" id="sq-category-toggles"></div>
-      </div>
-      <div class="sq-settings-hint">
-        Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Minstens 1 categorie moet aanstaan.
-      </div>
-    </div>
-  </details>
+      <div class="sq-tabs" id="sq-tabs"></div>
+      <div class="sq-tabs-hint">Tik nogmaals op dezelfde categorie voor een andere quest uit die groep.</div>
 
-  <details class="sq-card" id="sq-friends">
-    <summary>Vrienden</summary>
-    <div class="sq-settings-body">
-      <div id="sq-auth-signed-out">
-        <div class="sq-settings-field">
-          <label for="sq-username-input">Gebruikersnaam</label>
-          <input type="text" id="sq-username-input" placeholder="bijv. colin92" autocomplete="username">
-        </div>
-        <div class="sq-settings-field">
-          <label for="sq-password-input">Wachtwoord</label>
-          <input type="password" id="sq-password-input" placeholder="minstens 6 tekens" autocomplete="current-password">
-        </div>
-        <div class="sq-auth-actions">
-          <button class="sq-btn sq-btn-primary" id="sq-signup-btn" type="button">Account aanmaken</button>
-          <button class="sq-btn" id="sq-login-btn" type="button">Inloggen</button>
-        </div>
-        <div class="sq-auth-error" id="sq-auth-error"></div>
+      <div class="sq-board" id="sq-board">
+        <div id="sq-quest-text" aria-live="polite">Laden...</div>
       </div>
-      <div id="sq-auth-signed-in" style="display:none;">
-        <div class="sq-friends-me">
-          <span id="sq-user-name"></span>
-          <button class="sq-reset" id="sq-signout-btn" type="button">Uitloggen</button>
-        </div>
-        <div class="sq-settings-field">
-          <label for="sq-add-friend-input">Vriend toevoegen (gebruikersnaam)</label>
-          <div class="sq-add-friend-row">
-            <input type="text" id="sq-add-friend-input" placeholder="gebruikersnaam">
-            <button type="button" id="sq-add-friend-btn">Toevoegen</button>
+
+      <div class="sq-meta-row">
+        <div class="sq-stub">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C12 2 6 9 6 14C6 17.3137 8.68629 20 12 20C15.3137 20 18 17.3137 18 14C18 9 12 2 12 2Z" fill="#E2A63F" opacity="0.9"/>
+          </svg>
+          <div>
+            <div class="sq-stub-value" id="sq-streak-value">0</div>
+            <div class="sq-stub-label">dagen op rij</div>
           </div>
-          <div class="sq-auth-error" id="sq-friend-error"></div>
         </div>
-        <div class="sq-friends-list" id="sq-friends-list"></div>
+        <div class="sq-stub">
+          <div>
+            <div class="sq-stub-value" id="sq-longest-value">0</div>
+            <div class="sq-stub-label">langste reeks</div>
+          </div>
+        </div>
       </div>
-      <div class="sq-settings-hint">
-        Je gebruikersnaam, streak en of je vandaag al voltooid hebt zijn zichtbaar voor wie je toevoegt. Bewijsfoto's en quest-teksten blijven privé op je eigen toestel.
+
+      <div class="sq-proof" id="sq-proof">
+        <input type="file" accept="image/*" capture="environment" id="sq-photo-input" style="display:none">
+        <div class="sq-proof-empty" id="sq-proof-empty">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          <span>Maak een bewijsfoto, nodig om te kunnen voltooien</span>
+        </div>
+        <div class="sq-proof-filled" id="sq-proof-filled" style="display:none;">
+          <img id="sq-proof-thumb" alt="Bewijsfoto van je sidequest">
+          <span class="sq-proof-filled-text">Bewijsfoto toegevoegd</span>
+          <button type="button" class="sq-proof-retake" id="sq-proof-retake">Andere foto</button>
+        </div>
+      </div>
+
+      <div class="sq-actions">
+        <button class="sq-btn sq-btn-primary" id="sq-complete-btn">Voltooid</button>
+      </div>
+
+      <details class="sq-card" id="sq-settings">
+        <summary>Instellingen</summary>
+        <div class="sq-settings-body">
+          <div class="sq-settings-field">
+            <label for="sq-location-input">Locatie</label>
+            <input type="text" id="sq-location-input" placeholder="bijv. Melbourne, Sydney, Breda">
+          </div>
+          <div class="sq-settings-field">
+            <label>Categorieën in de pool</label>
+            <div class="sq-cat-toggles" id="sq-category-toggles"></div>
+          </div>
+          <div class="sq-settings-hint">
+            Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Minstens 1 categorie moet aanstaan.
+          </div>
+        </div>
+      </details>
+
+      <details class="sq-card">
+        <summary>Reislog (<span id="sq-log-count">0</span>)</summary>
+        <div class="sq-log-list" id="sq-log-list"></div>
+      </details>
+
+      <div class="sq-stats-footer">
+        <span id="sq-total-label">0 quests voltooid</span>
+        <span id="sq-breakdown-label"></span>
+      </div>
+
+      <div class="sq-footnote">
+        Nieuwe dag start om middernacht, op de tijd van je telefoon. Een niet-voltooide quest breekt je reeks.
+        <br/>
+        <button class="sq-reset" id="sq-reset-btn">Voortgang wissen</button>
       </div>
     </div>
-  </details>
 
-  <details class="sq-card">
-    <summary>Reislog (<span id="sq-log-count">0</span>)</summary>
-    <div class="sq-log-list" id="sq-log-list"></div>
-  </details>
+    <div id="sq-screen-friends" style="display:none;">
+      <h1 class="sq-title">Vrienden</h1>
+      <div class="sq-friends-me">
+        <span id="sq-user-name"></span>
+        <button class="sq-reset" id="sq-signout-btn" type="button">Uitloggen</button>
+      </div>
+      <div class="sq-settings-field">
+        <label for="sq-add-friend-input">Vriend toevoegen (gebruikersnaam)</label>
+        <div class="sq-add-friend-row">
+          <input type="text" id="sq-add-friend-input" placeholder="gebruikersnaam">
+          <button type="button" id="sq-add-friend-btn">Toevoegen</button>
+        </div>
+        <div class="sq-auth-error" id="sq-friend-error"></div>
+      </div>
+      <div class="sq-friends-list" id="sq-friends-list"></div>
+      <div class="sq-settings-hint" style="margin-top:16px;">
+        Vrienden zien je gebruikersnaam, streak, of je vandaag al voltooid hebt, en je laatste voltooide quests. Bewijsfoto's blijven privé op je eigen toestel.
+      </div>
+    </div>
 
-  <div class="sq-stats-footer">
-    <span id="sq-total-label">0 quests voltooid</span>
-    <span id="sq-breakdown-label"></span>
-  </div>
-
-  <div class="sq-footnote">
-    Nieuwe dag start om middernacht, op de tijd van je telefoon. Een niet-voltooide quest breekt je reeks.
-    Deze versie slaat voortgang lokaal op in deze browser op dit toestel. Geen sync met andere apparaten.
-    <br/>
-    <button class="sq-reset" id="sq-reset-btn">Voortgang wissen</button>
   </div>
 </div>
 
@@ -587,7 +626,6 @@
 <script>
 (function () {
   const QUESTS = [
-    // VERKEN — generic, location-templated
     { id: "v1", category: "verken", text: "Zoek de bekendste markt in {city} op en proef iets dat je nog nooit hebt gegeten." },
     { id: "v2", category: "verken", text: "Wandel het langste park of de grootste tuin in {city} van begin tot eind." },
     { id: "v3", category: "verken", text: "Stap in het openbaar vervoer zonder van tevoren te weten waar je uitstapt." },
@@ -693,6 +731,7 @@
   };
   let fbAuth = null, fbDb = null, fbUser = null, myUsername = "";
   let friendsListUnsub = null, friendDocUnsubs = {}, friendData = {};
+  let currentScreen = "quest";
   try {
     firebase.initializeApp(firebaseConfig);
     fbAuth = firebase.auth();
@@ -757,11 +796,10 @@
     const seedState = { activeCategories: DEFAULT_ACTIVE, location: "", recentIds: [] };
     const first = pickQuest(seedState, null);
     return {
-      version: 3,
+      version: 4,
       lastDate: today,
       dayNumber: 1,
       location: "",
-      groupCode: "",
       activeCategories: DEFAULT_ACTIVE.slice(),
       currentQuest: { id: first.id, category: first.category, text: renderQuestText(first.text, seedState) },
       completedToday: false,
@@ -776,7 +814,6 @@
   }
   function migrateState(state) {
     if (typeof state.location !== "string") state.location = "";
-    if (typeof state.groupCode !== "string") state.groupCode = "";
     if (typeof state.proofPhoto === "undefined") state.proofPhoto = null;
     if (!Array.isArray(state.activeCategories)) state.activeCategories = DEFAULT_ACTIVE.slice();
     const catMap = { melbourne: "verken", wildcard: "algemeen" };
@@ -805,6 +842,7 @@
       state.log = [];
     }
     delete state.rerollUsedToday;
+    delete state.groupCode;
     return state;
   }
   function saveState(state) {
@@ -936,6 +974,7 @@
             longestStreak: state.longestStreak,
             totalCompleted: state.totalCompleted,
             completedToday: state.completedToday,
+            completedLog: buildSharedLog(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
           })
         ]);
@@ -954,6 +993,16 @@
   function signOutUser() {
     if (fbAuth) fbAuth.signOut();
   }
+  function buildSharedLog() {
+    const entries = [];
+    if (state.completedToday) {
+      entries.push({ date: state.lastDate, category: state.currentQuest.category, text: state.currentQuest.text });
+    }
+    state.log.forEach(e => {
+      if (e.completed) entries.push({ date: e.date, category: e.category, text: e.text });
+    });
+    return entries.slice(0, 15);
+  }
   function pushMyStats() {
     if (!fbDb || !fbUser) return;
     fbDb.collection("users").doc(fbUser.uid).set({
@@ -962,6 +1011,7 @@
       longestStreak: state.longestStreak,
       totalCompleted: state.totalCompleted,
       completedToday: state.completedToday,
+      completedLog: buildSharedLog(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true }).catch(e => console.error("Delen mislukt", e));
   }
@@ -1019,17 +1069,24 @@
     list.sort((a, b) => (b.streak || 0) - (a.streak || 0));
     renderFriendsList(list);
   }
-  function renderAuthUI() {
-    const signedOut = document.getElementById("sq-auth-signed-out");
-    const signedIn = document.getElementById("sq-auth-signed-in");
+  function renderAuthGate() {
+    const gate = document.getElementById("sq-auth-gate");
+    const app = document.getElementById("sq-app");
     if (fbUser) {
-      signedOut.style.display = "none";
-      signedIn.style.display = "block";
+      gate.style.display = "none";
+      app.style.display = "block";
       document.getElementById("sq-user-name").textContent = myUsername ? ("Ingelogd als " + myUsername) : "Ingelogd";
     } else {
-      signedOut.style.display = "block";
-      signedIn.style.display = "none";
+      gate.style.display = "block";
+      app.style.display = "none";
     }
+  }
+  function switchScreen(screen) {
+    currentScreen = screen;
+    document.getElementById("sq-screen-quest").style.display = screen === "quest" ? "block" : "none";
+    document.getElementById("sq-screen-friends").style.display = screen === "friends" ? "block" : "none";
+    document.getElementById("sq-nav-quest").classList.toggle("active", screen === "quest");
+    document.getElementById("sq-nav-friends").classList.toggle("active", screen === "friends");
   }
   function renderFriendsList(friends) {
     const listEl = document.getElementById("sq-friends-list");
@@ -1043,14 +1100,27 @@
       return;
     }
     friends.forEach(f => {
-      const row = document.createElement("div");
-      row.className = "sq-friend-row";
-      row.innerHTML =
-        '<span class="sq-friend-name">' + (f.username || "onbekend") + '</span>' +
-        '<span class="sq-friend-streak">' + (f.streak || 0) + '</span>' +
-        '<span class="sq-friend-check">' + (f.completedToday ? "✓" : "") + '</span>' +
-        '<button type="button" class="sq-friend-remove" data-uid="' + f.uid + '">×</button>';
-      listEl.appendChild(row);
+      const card = document.createElement("div");
+      card.className = "sq-friend-card";
+      const log = Array.isArray(f.completedLog) ? f.completedLog : [];
+      const historyHtml = log.length
+        ? log.map(e => {
+            const meta = CATEGORY_META[e.category] || {};
+            return '<div class="sq-friend-history-row">' +
+              '<span class="sq-dot" style="background:var(' + (meta.varName || "--text-dim") + ')"></span>' +
+              '<span class="sq-friend-history-text">' + e.text + '</span>' +
+              '</div>';
+          }).join("")
+        : '<div class="sq-log-empty">Nog geen quests voltooid.</div>';
+      card.innerHTML =
+        '<div class="sq-friend-row-top">' +
+          '<span class="sq-friend-name">' + (f.username || "onbekend") + '</span>' +
+          '<span class="sq-friend-streak">' + (f.streak || 0) + '</span>' +
+          '<span class="sq-friend-check">' + (f.completedToday ? "✓" : "") + '</span>' +
+          '<button type="button" class="sq-friend-remove" data-uid="' + f.uid + '">×</button>' +
+        '</div>' +
+        '<details class="sq-friend-history"><summary>Recente quests</summary>' + historyHtml + '</details>';
+      listEl.appendChild(card);
     });
     listEl.querySelectorAll(".sq-friend-remove").forEach(btn => {
       btn.addEventListener("click", () => removeFriend(btn.getAttribute("data-uid")));
@@ -1245,6 +1315,8 @@
   document.getElementById("sq-login-btn").addEventListener("click", logIn);
   document.getElementById("sq-signout-btn").addEventListener("click", signOutUser);
   document.getElementById("sq-add-friend-btn").addEventListener("click", addFriend);
+  document.getElementById("sq-nav-quest").addEventListener("click", () => switchScreen("quest"));
+  document.getElementById("sq-nav-friends").addEventListener("click", () => switchScreen("friends"));
 
   if (fbAuth) {
     fbAuth.onAuthStateChanged((user) => {
@@ -1253,13 +1325,13 @@
       if (user) {
         fbDb.collection("users").doc(user.uid).get().then((doc) => {
           myUsername = doc.exists ? (doc.data().username || "") : myUsername;
-          renderAuthUI();
+          renderAuthGate();
         });
         pushMyStats();
         subscribeFriendsList();
       } else {
         myUsername = "";
-        renderAuthUI();
+        renderAuthGate();
         renderFriendsList([]);
       }
     });
