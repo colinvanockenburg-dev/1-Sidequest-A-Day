@@ -297,6 +297,11 @@
     padding: 0 0 0 5px;
     text-decoration: underline;
   }
+  .sq-terms { margin-top: 14px; }
+  .sq-terms-check { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: var(--text-muted); cursor: pointer; }
+  .sq-terms-check input[type="checkbox"] { accent-color: var(--amber); width: 16px; height: 16px; margin-top: 1px; flex-shrink: 0; }
+  .sq-terms-link { background: none; border: none; color: var(--amber); font-weight: 600; font-size: 12.5px; cursor: pointer; padding: 0; text-decoration: underline; }
+  .sq-terms-text { margin-top: 10px; font-size: 11.5px; color: var(--text-dim); line-height: 1.6; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
 
   .sq-friends-me {
     display: flex;
@@ -512,6 +517,15 @@
     </div>
     <div class="sq-auth-actions">
       <button class="sq-btn sq-btn-primary" id="sq-auth-submit-btn" type="button">Inloggen</button>
+    </div>
+    <div class="sq-terms" id="sq-terms-block" style="display:none;">
+      <label class="sq-terms-check">
+        <input type="checkbox" id="sq-terms-checkbox">
+        <span>Ik ga akkoord met de <button type="button" id="sq-terms-toggle" class="sq-terms-link">voorwaarden</button></span>
+      </label>
+      <div class="sq-terms-text" id="sq-terms-text" style="display:none;">
+        Door een account aan te maken ga je akkoord met het volgende: jij bent zelf verantwoordelijk voor de inhoud die je deelt in deze app, waaronder bewijsfoto's die je zichtbaar maakt voor anderen. Staat er een herkenbaar persoon op een foto die je deelt, dan ben jij verantwoordelijk voor het vooraf verkrijgen van diens toestemming. De maker van deze app is niet aansprakelijk voor schade, klachten of andere gevolgen die voortvloeien uit inhoud die gebruikers plaatsen of delen, inclusief foto's van derden zonder toestemming. Deze app is een persoonlijk project, aangeboden zonder garanties.
+      </div>
     </div>
     <div class="sq-auth-error" id="sq-auth-error"></div>
     <div class="sq-auth-switch">
@@ -1169,6 +1183,7 @@
     const password = document.getElementById("sq-password-input").value;
     if (!username || username.length < 3) { showAuthError("Gebruikersnaam moet minstens 3 tekens zijn."); return; }
     if (!password || password.length < 6) { showAuthError("Wachtwoord moet minstens 6 tekens zijn."); return; }
+    if (!document.getElementById("sq-terms-checkbox").checked) { showAuthError("Je moet akkoord gaan met de voorwaarden voor je een account kunt aanmaken."); return; }
     const usernameRef = fbDb.collection("usernames").doc(username);
     usernameRef.get().then((doc) => {
       if (doc.exists) { showAuthError("Die gebruikersnaam is al bezet."); return; }
@@ -1184,6 +1199,7 @@
             totalCompleted: state.totalCompleted,
             completedToday: state.completedToday,
             completedLog: buildSharedLog(),
+            termsAcceptedAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
           })
         ]);
@@ -1534,20 +1550,27 @@
     const submitBtn = document.getElementById("sq-auth-submit-btn");
     const switchText = document.getElementById("sq-auth-switch-text");
     const switchBtn = document.getElementById("sq-auth-switch-btn");
+    const termsBlock = document.getElementById("sq-terms-block");
     if (authMode === "login") {
       submitBtn.textContent = "Inloggen";
       switchText.textContent = "Nog geen account?";
       switchBtn.textContent = "Account aanmaken";
+      termsBlock.style.display = "none";
     } else {
       submitBtn.textContent = "Account aanmaken";
       switchText.textContent = "Al een account?";
       switchBtn.textContent = "Inloggen";
+      termsBlock.style.display = "block";
     }
     showAuthError("");
   }
   document.getElementById("sq-auth-switch-btn").addEventListener("click", () => {
     authMode = authMode === "login" ? "signup" : "login";
     updateAuthModeUI();
+  });
+  document.getElementById("sq-terms-toggle").addEventListener("click", () => {
+    const el = document.getElementById("sq-terms-text");
+    el.style.display = el.style.display === "none" ? "block" : "none";
   });
   document.getElementById("sq-auth-submit-btn").addEventListener("click", () => {
     if (authMode === "login") logIn(); else signUp();
