@@ -583,13 +583,14 @@
           <div class="sq-settings-field">
             <label for="sq-location-input">Locatie</label>
             <input type="text" id="sq-location-input" placeholder="bijv. Melbourne, Sydney, Breda">
+            <button type="button" id="sq-refresh-suggestions-btn" class="sq-auth-switch-link" style="margin-top:8px; padding-left:0; text-decoration:none;">↻ Plek-suggesties verversen</button>
           </div>
           <div class="sq-settings-field">
             <label>Categorieën in de pool</label>
             <div class="sq-cat-toggles" id="sq-category-toggles"></div>
           </div>
           <div class="sq-settings-hint">
-            Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Minstens 1 categorie moet aanstaan.
+            Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Bij een nieuwe locatie zoekt de app zelf bekende plekken in de buurt op (via Wikipedia) en mixt die tussen je Verken-quests. Minstens 1 categorie moet aanstaan.
           </div>
         </div>
       </details>
@@ -763,6 +764,86 @@
   const DEFAULT_ACTIVE = ["verken", "fitness", "algemeen"];
   const MONTHS = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
   const STORAGE_KEY = "sidequest-state";
+  const DYNAMIC_CACHE_PREFIX = "sq-dynamic:";
+  let dynamicVerkenQuests = [];
+
+  function normalizeLocationKey(loc) {
+    return (loc || "").trim().toLowerCase();
+  }
+  function getAllQuests() {
+    return dynamicVerkenQuests.length ? QUESTS.concat(dynamicVerkenQuests) : QUESTS;
+  }
+  function loadDynamicQuestsFromCache(loc) {
+    const key = normalizeLocationKey(loc);
+    if (!key) return [];
+    try {
+      const raw = localStorage.getItem(DYNAMIC_CACHE_PREFIX + key);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed.quests) ? parsed.quests : [];
+    } catch (e) { return []; }
+  }
+  function saveDynamicQuestsToCache(loc, quests) {
+    const key = normalizeLocationKey(loc);
+    if (!key) return;
+    try {
+      localStorage.setItem(DYNAMIC_CACHE_PREFIX + key, JSON.stringify({ quests: quests, fetchedAt: Date.now() }));
+    } catch (e) { console.error("Cache opslaan mislukt", e); }
+  }
+  const DYNAMIC_TEMPLATES = [
+    (name, city) => "Zoek " + name + " op, vlakbij " + city + ", en ontdek wat het bijzonder maakt.",
+    (name, city) => "Bezoek " + name + " en breng er minstens 15 minuten door.",
+    (name, city) => "Loop naar " + name + " en bekijk het van dichtbij.",
+    (name, city) => "Zoek uit waarom " + name + " de moeite waard is, en ga zelf kijken."
+  ];
+  async function fetchDynamicQuestsForLocation(loc) {
+    const cityQuery = loc.trim();
+    if (!cityQuery) return [];
+    try {
+      const coordUrl = "https://en.wikipedia.org/w/api.php?action=query&prop=coordinates&titles=" + encodeURIComponent(cityQuery) + "&format=json&origin=*";
+      const coordRes = await fetch(coordUrl);
+      const coordData = await coordRes.json();
+      const pages = coordData.query && coordData.query.pages;
+      if (!pages) return [];
+      const page = Object.values(pages)[0];
+      if (!page || typeof page.missing !== "undefined" || !page.coordinates || !page.coordinates.length) return [];
+      const lat = page.coordinates[0].lat;
+      const lon = page.coordinates[0].lon;
+
+      const geoUrl = "https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=" + lat + "%7C" + lon + "&gsradius=6000&gslimit=25&format=json&origin=*";
+      const geoRes = await fetch(geoUrl);
+      const geoData = await geoRes.json();
+      const results = (geoData.query && geoData.query.geosearch) || [];
+
+      const cityNameLower = cityQuery.toLowerCase();
+      const filtered = results.filter(r => r.dist > 150 && r.title.toLowerCase() !== cityNameLower);
+      const picked = filtered.slice(0, 16);
+
+      return picked.map((r, i) => ({
+        id: "dyn-" + normalizeLocationKey(loc) + "-" + i,
+        category: "verken",
+        dynamic: true,
+        text: DYNAMIC_TEMPLATES[i % DYNAMIC_TEMPLATES.length](r.title, cityQuery)
+      }));
+    } catch (e) {
+      console.error("Locatie-suggesties ophalen mislukt", e);
+      return [];
+    }
+  }
+  async function refreshDynamicQuests(loc, force) {
+    if (!loc) { dynamicVerkenQuests = []; return; }
+    if (!force) {
+      const cached = loadDynamicQuestsFromCache(loc);
+      if (cached.length) { dynamicVerkenQuests = cached; return; }
+    }
+    const fetched = await fetchDynamicQuestsForLocation(loc);
+    if (fetched.length) {
+      dynamicVerkenQuests = fetched;
+      saveDynamicQuestsToCache(loc, fetched);
+    } else if (!force) {
+      dynamicVerkenQuests = [];
+    }
+  }
 
   function todayStr() {
     const d = new Date();
@@ -790,9 +871,10 @@
     return true;
   }
   function pickQuest(state, excludeCategory) {
-    const eligible = QUESTS.filter(q => isEligible(q, state));
-    const base = eligible.length ? eligible : QUESTS.filter(q => state.activeCategories.includes(q.category));
-    const usable = base.length ? base : QUESTS;
+    const all = getAllQuests();
+    const eligible = all.filter(q => isEligible(q, state));
+    const base = eligible.length ? eligible : all.filter(q => state.activeCategories.includes(q.category));
+    const usable = base.length ? base : all;
     const pool = usable.filter(q => !state.recentIds.includes(q.id));
     const finalPool = pool.length ? pool : usable;
     let candidates = excludeCategory ? finalPool.filter(q => q.category !== excludeCategory) : finalPool;
@@ -800,8 +882,9 @@
     return candidates[Math.floor(Math.random()*candidates.length)];
   }
   function pickFromCategory(state, cat) {
-    const eligible = QUESTS.filter(q => q.category === cat && isEligible(q, state));
-    const base = eligible.length ? eligible : QUESTS.filter(q => q.category === cat);
+    const all = getAllQuests();
+    const eligible = all.filter(q => q.category === cat && isEligible(q, state));
+    const base = eligible.length ? eligible : all.filter(q => q.category === cat);
     const pool = base.filter(q => !state.recentIds.includes(q.id));
     const finalPool = pool.length ? pool : base;
     if (!finalPool.length) return pickQuest(state, null);
@@ -1312,6 +1395,10 @@
   document.getElementById("sq-location-input").addEventListener("change", (e) => {
     state.location = e.target.value.trim();
     saveState(state);
+    refreshDynamicQuests(state.location);
+  });
+  document.getElementById("sq-refresh-suggestions-btn").addEventListener("click", () => {
+    if (state.location) refreshDynamicQuests(state.location, true);
   });
   const photoInput = document.getElementById("sq-photo-input");
   document.getElementById("sq-proof-empty").addEventListener("click", () => {
@@ -1377,6 +1464,10 @@
   }
 
   render(true);
+
+  if (state.location) {
+    refreshDynamicQuests(state.location);
+  }
 })();
 
 if ("serviceWorker" in navigator) {
