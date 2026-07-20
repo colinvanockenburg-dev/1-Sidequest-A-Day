@@ -590,7 +590,7 @@
             <div class="sq-cat-toggles" id="sq-category-toggles"></div>
           </div>
           <div class="sq-settings-hint">
-            Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Bij een nieuwe locatie zoekt de app zelf actuele plekken in de buurt op (via OpenStreetMap) en mixt die tussen je Verken-quests. Minstens 1 categorie moet aanstaan.
+            Dit bepaalt welke categorieën je vandaag kunt kiezen. Locatie verandert je volgende sidequest, niet de huidige. Bij een nieuwe locatie zoekt de app zelf actuele plekken in de buurt op (via OpenStreetMap) en mixt die tussen je Verken-quests. Dat ververst zichzelf elke 30 dagen automatisch. Minstens 1 categorie moet aanstaan.
           </div>
         </div>
       </details>
@@ -765,6 +765,7 @@
   const MONTHS = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
   const STORAGE_KEY = "sidequest-state";
   const DYNAMIC_CACHE_PREFIX = "sq-dynamic:";
+  const DYNAMIC_CACHE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
   let dynamicVerkenQuests = [];
 
   function normalizeLocationKey(loc) {
@@ -775,13 +776,15 @@
   }
   function loadDynamicQuestsFromCache(loc) {
     const key = normalizeLocationKey(loc);
-    if (!key) return [];
+    if (!key) return null;
     try {
       const raw = localStorage.getItem(DYNAMIC_CACHE_PREFIX + key);
-      if (!raw) return [];
+      if (!raw) return null;
       const parsed = JSON.parse(raw);
-      return Array.isArray(parsed.quests) ? parsed.quests : [];
-    } catch (e) { return []; }
+      if (!Array.isArray(parsed.quests) || !parsed.quests.length) return null;
+      const age = Date.now() - (parsed.fetchedAt || 0);
+      return { quests: parsed.quests, stale: age > DYNAMIC_CACHE_MAX_AGE_MS };
+    } catch (e) { return null; }
   }
   function saveDynamicQuestsToCache(loc, quests) {
     const key = normalizeLocationKey(loc);
@@ -897,14 +900,16 @@
     if (!loc) { dynamicVerkenQuests = []; return; }
     if (!force) {
       const cached = loadDynamicQuestsFromCache(loc);
-      if (cached.length) { dynamicVerkenQuests = cached; return; }
+      if (cached) {
+        dynamicVerkenQuests = cached.quests;
+        if (!cached.stale) return;
+        // Stale: keep showing the cached list now, refresh quietly in the background.
+      }
     }
     const fetched = await fetchDynamicQuestsForLocation(loc);
     if (fetched.length) {
       dynamicVerkenQuests = fetched;
       saveDynamicQuestsToCache(loc, fetched);
-    } else if (!force) {
-      dynamicVerkenQuests = [];
     }
   }
 
